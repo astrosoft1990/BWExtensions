@@ -9,8 +9,15 @@
     {
         "file": "GlodenSnitch.js",
         "name": "接机小助手",
-        "description": "接机小助手 自动更新版 mug你所想",
+        "description": "接机小助手自动更新版 mug你所想",
         "detail": "mirrorhye[2564936]",
         "version": "v2"
+    },
+    {
+        "file": "bazaar_price_helper_1_0_1.js",
+        "name": "bazaar助手",
+        "description": "自动帮商品填上合适的市场价",
+        "detail": "mirrorhye[2564936]",
+        "version": "v1.0.1"
     }
 ]
