@@ -3,6 +3,14 @@
         "file": "test.js",
         "name": "test",
         "description": "测试用例",
+        "detail": "只是一个测试用例",
         "version": "v0.0.1"
+    },
+    {
+        "file": "GlodenSnitch.js",
+        "name": "接机小助手",
+        "description": "接机小助手 自动更新版 mug你所想",
+        "detail": "mirrorhye[2564936]",
+        "version": "v2"
     }
 ]
