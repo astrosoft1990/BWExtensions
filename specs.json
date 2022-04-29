@@ -1,5 +1,8 @@
 [
     {
-        "name": 
+        "file": "test.js",
+        "name": "test",
+        "description": "测试用例",
+        "version": "v0.0.1"
     }
 ]
