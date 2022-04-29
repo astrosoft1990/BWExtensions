@@ -4,7 +4,7 @@
         "name": "test",
         "description": "测试用例",
         "detail": "只是一个测试用例",
-        "version": "v0.0.2"
+        "version": "v0.0.3"
     },
     {
         "file": "GlodenSnitch.js",
