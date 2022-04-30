@@ -41,11 +41,20 @@
         "version": "v1.0.1"
     },
     {
+        "file": "Simple_Attacking_Page_1_0_0.js",
+        "name": "战斗页面简化",
+        "author": "htys[1545351]",
+        "description": "屏蔽进攻页面的人物形象",
+        "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
+        "version": "v1.0.0"
+    },
+    {
         "file": "bazaar_scan.js",
         "name": "BazaarScan",
         "author": "zaiyiding[2722372]",
         "description": "提示bazaar中的低价商品",
         "detail": "定时地扫描bazaar, 在商品低于设定价格时发出通知, 目前只扫描了xan",
+        "match": "torn.com/loader.php?sid=attack",
         "version": "v1.0.0"
     },
     {
