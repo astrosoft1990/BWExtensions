@@ -1,5 +1,21 @@
 [
     {
+        "file": "iTravel_2_2.js",
+        "name": "iTravel飞花助手",
+        "author": "htys[1545351]",
+        "description": "在时钟处显示飞花库存",
+        "detail": "在时钟处显示飞花库存",
+        "version": "v2.2.0"
+    },
+    {
+        "file": "iTravel_1.9.3.js",
+        "name": "iStock",
+        "author": "htys[1545351]",
+        "description": "股票界面增强",
+        "detail": "为股票界面增加大量统计数据信息",
+        "version": "v1.9.3"
+    },
+    {
         "file": "GlodenSnitch.js",
         "name": "接机小助手",
         "author": "mirrorhye[2564936]",
@@ -23,5 +39,16 @@
         "description": "提示bazaar中的低价商品",
         "detail": "定时地扫描bazaar, 在商品低于设定价格时发出通知, 目前只扫描了xan",
         "version": "v1.0.0"
+    },
+    {
+        "file": "christmas_torn_2_3_3.js",
+        "name": "Christmas Town Helper",
+        "author": "Hardy[2131687]",
+        "description": "圣诞小镇辅助脚本",
+        "detail": "圣诞小镇辅助脚本",
+        "match": "torn.com/christmas_town",
+        "version": "v2.3.3"
     }
+
+    
 ]
