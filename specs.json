@@ -2,15 +2,25 @@
     {
         "file": "GlodenSnitch.js",
         "name": "接机小助手",
-        "description": "接机小助手自动更新版 mug你所想",
-        "detail": "mirrorhye[2564936]",
-        "version": "v2"
+        "author": "mirrorhye[2564936]",
+        "description": "接机小助手自动更新版",
+        "detail": "展示一个飞贼悬浮框用以显示可以接机的对象",
+        "version": "v2.0.0"
     },
     {
         "file": "bazaar_price_helper_1_0_1.js",
         "name": "bazaar助手",
+        "author": "mirrorhye[2564936]",
         "description": "自动帮商品填上合适的市场价",
-        "detail": "mirrorhye[2564936]",
+        "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
         "version": "v1.0.1"
+    },
+    {
+        "file": "bazaar_scan.js",
+        "name": "BazaarScan",
+        "author": "zaiyiding[2722372]",
+        "description": "提示bazaar中的低价商品",
+        "detail": "定时地扫描bazaar, 在商品低于设定价格时发出通知, 目前只扫描了xan",
+        "version": "v1.0.0"
     }
 ]
