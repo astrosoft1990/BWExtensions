@@ -7,7 +7,7 @@
     "author": "作者信息",
     "description": "简短的描述",
     "detail": "详细的描述, 鼠标悬浮在description上时显示",
-    "match": "脚本的加载规则,正则表达式 (匹配规则 window.location.href.match(new RegExp(spec.match)) )",
+    "match": "脚本的加载规则,正则表达式 (匹配规则 window.location.href.match(new RegExp(match)) )",
     "version": "版本号, 版本号不同时会提示可更新"
 }
 ```
