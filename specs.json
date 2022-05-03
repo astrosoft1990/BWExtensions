@@ -58,6 +58,15 @@
         "version": "v1.0.0"
     },
     {
+        "file": "批量调账_1.1.user.js",
+        "name": "批量调账_1.1.user.js",
+        "author": "htys[1545351]",
+        "description": "批量调整帮派账务",
+        "detail": "yyds!",
+        "match": "factions.php?step=your#/tab=controls",
+        "version": "v1.1.0"
+    },
+    {
         "file": "christmas_torn_2_3_3.js",
         "name": "Christmas Town Helper",
         "author": "Hardy[2131687]",
