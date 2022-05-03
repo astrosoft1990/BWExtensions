@@ -63,8 +63,8 @@
         "author": "htys[1545351]",
         "description": "批量调整帮派账务",
         "detail": "yyds!",
-        "match": "factions.php?step=your#/tab=controls",
-        "version": "v1.1.0"
+        "match": "factions.php\\?step=your#/tab=controls",
+        "version": "v1.1.1"
     },
     {
         "file": "christmas_torn_2_3_3.js",
