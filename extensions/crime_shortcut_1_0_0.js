@@ -108,8 +108,8 @@
             $("#extcs-input").blur(function() {
                 let crimetype = $(this).val();
                 // validate
-                let s = crimetype.split('-');
                 if (!validateCrimetype(crimetype)) {
+                    if (crimetype.length == 0) $(".extcs-wrapper").remove();    // 退出输入状态
                     return;
                 }
 
