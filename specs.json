@@ -24,6 +24,15 @@
         "version": "v1.9.3"
     },
     {
+        "file": "crime_shortcut_1_0_0.js",
+        "name": "犯罪捷径",
+        "author": "mirrorhye[2564936]",
+        "description": "更方便的快速犯罪",
+        "detail": "day day 烧仓库",
+        "match": "torn.com/crimes.php",
+        "version": "v1.0.0"
+    },
+    {
         "file": "GlodenSnitch.js",
         "name": "接机小助手",
         "author": "mirrorhye[2564936]",
