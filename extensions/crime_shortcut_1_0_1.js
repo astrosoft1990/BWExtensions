@@ -198,7 +198,7 @@
             "", // 1
             "crimes.php?step=docrime2", // 2
             "crimes.php?step=docrime2", // 3
-            "crimes.php?step=docrime3", // 4
+            "crimes.php?step=docrime4", // 4
             "crimes.php?step=docrime4", // 5
             "crimes.php?step=docrime4", // 6
             "crimes.php?step=docrime4", // 7
