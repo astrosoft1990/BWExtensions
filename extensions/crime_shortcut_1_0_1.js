@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crime捷径
 // @namespace    TornExtensions
-// @version      1.0
+// @version      1.0.1
 // @description  快捷犯罪
 // @author       mirrorhye[2564936]
 // @match        https://www.torn.com/crimes.php*
@@ -42,11 +42,32 @@
 
     function validateCrimetype(crimetype) {
         let s = crimetype.split('-');
-        if (s.length == 2 
-            && parseInt(s[0]) > 1 && parseInt(s[0]) < crimeMap.length
-            && parseInt(s[1])-1 >= 0 && parseInt(s[1])-1 < crimeMap[parseInt(s[0])].length
+        if ((s.length == 3 && parseInt(s[0]) == 4) &&
+            parseInt(s[1]) - 1 >= 0 && parseInt(s[1]) - 1 < crimeMap[4].length &&
+            parseInt(s[2]) - 1 >= 0 && parseInt(s[2]) - 1 < crimeMap[4][parseInt(s[1] - 1)].length
+        ) return true;
+        if ((s.length == 2 && parseInt(s[0]) != 4) &&
+            parseInt(s[0]) > 1 && parseInt(s[0]) < crimeMap.length &&
+            parseInt(s[1]) - 1 >= 0 && parseInt(s[1]) - 1 < crimeMap[parseInt(s[0])].length
         ) return true;
         return false;
+    }
+
+    function splitCrimetype(crimetype) {
+        if (!validateCrimetype) throw Error(`wrong crimetype ${crimetype}`);
+        let s = crimetype.split('-');
+        let nervetake = parseInt(s[0]),
+            crime = undefined,
+            action = actionMap[nervetake];
+        if (nervetake == 4) {
+            let subtype1 = parseInt(s[1]) - 1;
+            let subtype2 = parseInt(s[2]) - 1;
+            crime = crimeMap[nervetake][subtype1][subtype2];
+        } else {
+            let subtype = parseInt(s[1]) - 1;
+            crime = crimeMap[nervetake][subtype];
+        }
+        return [nervetake, crime, action];
     }
 
     function crimeColor(nervetake) {
@@ -58,10 +79,10 @@
         if (!validateCrimetype(crimetype)) {
             return ``;
         }
-        let nervetake = parseInt(crimetype.split('-')[0]);
-        let subtype =parseInt( crimetype.split('-')[1])-1;
-        let crime = crimeMap[nervetake][subtype];
-        let action = actionMap[nervetake];
+        let s = splitCrimetype(crimetype);
+        let nervetake = s[0];
+        let crime = s[1];
+        let action = s[2];
         return `<form action="${action}" method="post" style="display:inline-block; margin:2px 5px">
             <input name="nervetake" type="hidden" value="${nervetake}">
             <input name="crime" type="hidden" value="${crime}">
@@ -109,7 +130,7 @@
                 let crimetype = $(this).val();
                 // validate
                 if (!validateCrimetype(crimetype)) {
-                    if (crimetype.length == 0) $(".extcs-wrapper").remove();    // 退出输入状态
+                    if (crimetype.length == 0) $(".extcs-wrapper").remove(); // 退出输入状态
                     return;
                 }
 
@@ -128,7 +149,7 @@
 
         $("#extcs-remove").click(() => {
             if ($("#extcs-remove").hasClass("extcs-removing")) {
-                $(".extcs-wrapper").remove();   // 直接重绘 简单粗暴
+                $(".extcs-wrapper").remove(); // 直接重绘 简单粗暴
             } else {
                 $(".extcs-btn").css("background-color", colors.red);
                 $(".extcs-btn").addClass("extcs-removing");
@@ -173,27 +194,27 @@
 
     // $("form[name='crimes']").attr('action')
     const actionMap = [
-        "",  // 0
-        "",  // 1
-        "crimes.php?step=docrime2",  // 2
-        "crimes.php?step=docrime2",  // 3
-        "crimes.php?step=docrime3",  // 4
-        "crimes.php?step=docrime4",  // 5
-        "crimes.php?step=docrime4",  // 6
-        "crimes.php?step=docrime4",  // 7
-        "crimes.php?step=docrime4",  // 8
-        "crimes.php?step=docrime4",  // 9
-        "crimes.php?step=docrime4",  // 10
-        "crimes.php?step=docrime4",  // 11
-        "crimes.php?step=docrime4",  // 12
-        "crimes.php?step=docrime4",  // 13
-        "crimes.php?step=docrime4",  // 14
-        "crimes.php?step=docrime4",  // 15
-        "crimes.php?step=docrime4",  // 16
-        "crimes.php?step=docrime4",  // 17
-        "crimes.php?step=docrime4",  // 18
-    ]
-    // let s=``; $(".choice-container label").siblings('input').each((_, e) => (s+=`"${$(e).attr('value')}",\n`)); console.log(s);
+            "", // 0
+            "", // 1
+            "crimes.php?step=docrime2", // 2
+            "crimes.php?step=docrime2", // 3
+            "crimes.php?step=docrime3", // 4
+            "crimes.php?step=docrime4", // 5
+            "crimes.php?step=docrime4", // 6
+            "crimes.php?step=docrime4", // 7
+            "crimes.php?step=docrime4", // 8
+            "crimes.php?step=docrime4", // 9
+            "crimes.php?step=docrime4", // 10
+            "crimes.php?step=docrime4", // 11
+            "crimes.php?step=docrime4", // 12
+            "crimes.php?step=docrime4", // 13
+            "crimes.php?step=docrime4", // 14
+            "crimes.php?step=docrime4", // 15
+            "crimes.php?step=docrime4", // 16
+            "crimes.php?step=docrime4", // 17
+            "crimes.php?step=docrime4", // 18
+        ]
+        // let s=``; $(".choice-container label").siblings('input').each((_, e) => (s+=`"${$(e).attr('value')}",\n`)); console.log(s);
     const crimeMap = [
         [], // 0
         [], // 1
@@ -218,10 +239,26 @@
             "dvdthriller",
         ],
         [ // 4
-            "sweetshop",
-            "marketstall",
-            "clothesshop",
-            "jewelryshop",
+            [ // 4-1
+                "chocolatebars",
+                "bonbons",
+                "extrastrongmints",
+            ],
+            [ // 4-2
+                "musicstall",
+                "electronicsstall",
+                "computerstall",
+            ],
+            [ // 4-3
+                "tanktop",
+                "trainers",
+                "jacket",
+            ],
+            [ // 4-4
+                "watch",
+                "necklace",
+                "ring",
+            ],
         ],
         [ // 5
             "hobo",
