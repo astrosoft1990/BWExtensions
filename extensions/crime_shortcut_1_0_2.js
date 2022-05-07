@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crime捷径
 // @namespace    TornExtensions
-// @version      1.0.1
+// @version      1.0.2
 // @description  快捷犯罪
 // @author       mirrorhye[2564936]
 // @match        https://www.torn.com/crimes.php*
@@ -91,6 +91,10 @@
     }
 
     function makeShortcuts() {
+        if (window.location.href.indexOf('crimes.php') < 0) {
+            $(".extcs-wrapper").remove();
+            return;
+        }
         let title = $(".content-title");
         if ($(".captcha").length > 0 || $(".extcs-wrapper").length > 0) {
             if (title.next()[0] != $(".extcs-wrapper")[0]) {
@@ -174,17 +178,17 @@
             }
         })
 
-        const OB = new MutationObserver(() => {
-            OB.disconnect();
+        const observer = new MutationObserver(() => {
+            observer.disconnect();
             makeShortcuts();
-            OB.observe($(".content-wrapper")[0], {
+            observer.observe($(".content-wrapper")[0], {
                 characterData: true,
                 attributes: true,
                 subtree: true,
                 childList: true
             });
         });
-        OB.observe($(".content-wrapper")[0], {
+        observer.observe($(".content-wrapper")[0], {
             characterData: true,
             attributes: true,
             subtree: true,
