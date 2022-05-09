@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         iTravel
 // @namespace    TornExtensions
-// @version      2.2.1
+// @version      2.2.2
 // @description  显示下次吃药时间，飞行到达目的地时间，方便设置闹钟
 // @author       htys [1545351]
-// @match        https://www.torn.com/*.php*
+// @match        https://www.torn.com/*
 // @grant        GM_xmlhttpRequest
 // @connect      yata.yt
 // ==/UserScript==
@@ -13,7 +13,6 @@
     'use strict';
     //const $ = window.jQuery;
 
-    // 跨域操作
     // 跨域操作
     const UserScriptEngineEnums = Object.freeze({
         GM: 'gm',
@@ -310,7 +309,7 @@
                     }
                 }
             } catch (error) {
-                console.log(error);;
+                console.log(error);
             }
         }).catch(function(err) {
             console.log(`load failed: ${err}`);
