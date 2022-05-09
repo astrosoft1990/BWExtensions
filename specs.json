@@ -1,14 +1,14 @@
 [
     {
-        "file": "iTravel_2_2.js",
+        "file": "iTravel.js",
         "name": "iTravel飞花助手",
         "author": "htys[1545351]",
-        "description": "[PDA暂未适配] 在时钟处显示飞花库存",
+        "description": "在时钟处显示飞花库存",
         "detail": "在时钟处显示飞花库存",
-        "version": "v2.2.0"
+        "version": "v2.2.1"
     },
     {
-        "file": "iStock_1.9.3.js",
+        "file": "iStock.js",
         "name": "iStock",
         "author": "htys[1545351]",
         "description": "股票界面增强",
@@ -16,7 +16,7 @@
         "version": "v1.9.3"
     },
     {
-        "file": "iStock_AcronymReplace_1_9_3.js",
+        "file": "iStock_AcronymReplace.js",
         "name": "iStock股票缩写",
         "author": "",
         "description": "为每支股票添加一个缩写",
@@ -24,7 +24,7 @@
         "version": "v1.9.3"
     },
     {
-        "file": "crime_shortcut_1_0_2.js",
+        "file": "crime_shortcut.js",
         "name": "犯罪捷径",
         "author": "mirrorhye[2564936]",
         "description": "更方便的快速犯罪",
@@ -41,7 +41,7 @@
         "version": "v2.0.0"
     },
     {
-        "file": "bazaar_price_helper_1_0_1.js",
+        "file": "bazaar_price_helper.js",
         "name": "bazaar助手",
         "author": "mirrorhye[2564936]",
         "description": "自动帮商品填上合适的市场价",
@@ -50,7 +50,7 @@
         "version": "v1.0.1"
     },
     {
-        "file": "Simple_Attacking_Page_1_0_0.js",
+        "file": "Simple_Attacking_Page.js",
         "name": "战斗页面简化",
         "author": "htys[1545351]",
         "description": "屏蔽进攻页面的人物形象",
@@ -67,7 +67,7 @@
         "version": "v1.0.0"
     },
     {
-        "file": "批量调账_1.1.user.js",
+        "file": "批量调账.user.js",
         "name": "批量调账",
         "author": "htys[1545351]",
         "description": "批量调整帮派账务",
@@ -76,7 +76,7 @@
         "version": "v1.1.0"
     },
     {
-        "file": "christmas_torn_2_3_3.js",
+        "file": "christmas_torn.js",
         "name": "Christmas Town Helper",
         "author": "Hardy[2131687]",
         "description": "圣诞小镇辅助脚本",

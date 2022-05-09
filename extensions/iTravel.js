@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         iTravel
 // @namespace    TornExtensions
-// @version      2.2
+// @version      2.2.1
 // @description  显示下次吃药时间，飞行到达目的地时间，方便设置闹钟
 // @author       htys [1545351]
 // @match        https://www.torn.com/*.php*
@@ -12,6 +12,56 @@
 (function() {
     'use strict';
     //const $ = window.jQuery;
+
+    // 跨域操作
+    // 跨域操作
+    const UserScriptEngineEnums = Object.freeze({
+        GM: 'gm',
+        PDA: 'pda',
+        OTHER: 'other'
+    });
+
+    let userScriptEngine = UserScriptEngineEnums.OTHER;
+    try {
+        GM_xmlhttpRequest;
+        userScriptEngine = UserScriptEngineEnums.GM;
+    } catch {
+        try {
+            PDA_httpGet;
+            userScriptEngine = UserScriptEngineEnums.PDA;
+        } catch {
+        }
+    }
+
+    async function corsGet(url) {
+        console.log(`[cors] get ${url}`);
+        switch (userScriptEngine) {
+            case UserScriptEngineEnums.GM:
+                return new Promise((resolve, reject) => {
+                    GM_xmlhttpRequest({
+                        method: 'get',
+                        url: url,
+                        ontimeout: res => reject(`timeout: ${res}`),
+                        onload: res => resolve(res.response),
+                        onerror: res => reject(`error: ${res}`),
+                    });
+                });
+            case UserScriptEngineEnums.PDA:
+                return new Promise((resolve, reject) => {
+                    PDA_httpGet(`${url}`).then((res) => {
+                        resolve(res.responseText);
+                    }).catch((err) => {
+                        reject(`error: ${err}`);
+                    });
+                });
+            case UserScriptEngineEnums.OTHER:
+            default:
+                return new Promise((_, reject) => {
+                    reject(`error：当前不支持Cors操作`);
+                });
+        }
+    }
+
     const stockAPI = "https://yata.yt/api/v1/travel/export/";//海外库存数据源，此处为yata
     const stock_refresh = 10;    //库存数据源刷新频率，默认10分钟刷新一次（最小5）
     const basic_refresh = 1;     //基础刷新频率，默认1分钟最多读取2条torn api（最小1）
@@ -221,62 +271,49 @@
 
     function getYataData(now) {
         $('#travel-hub').append("<p><span class='t-blue'>##### </span><span class='t-green'>正在更新</span><span class='t-blue'> #####</span></p>");
-        GM_xmlhttpRequest({
-            method: 'GET',
-            timeout: 40000,
-            url: stockAPI,
-            responseType: 'text',
-            onload: function(e) {
-                try {
-                    console.log('yata fetched');
-                    const stock = JSON.parse(e.responseText)['stocks'];
-                    //console.log(typeof(e),typeof(e.responseText))
-                    //const stock = e.responseText['stocks'];
-                    let target_list = {};
-                    target_list['last-updated'] = now;
-                    target_list['stocks'] = {};
-                    if (stock) {
-                        //console.log(stock)
-                        for (let country3e in stock) {
-                            let buylist = {};
-                            for (let country in destination) {
-                                if (country3e == destination[country].name3e) {
-                                    buylist = destination[country].buylist;
-                                }
-                            }
-
-                            const country_stocks = stock[country3e].stocks;
-
-                            for (let i=0;i<country_stocks.length;i++) {
-                                if (country_stocks[i].id in buylist) {
-                                    const item_id = country_stocks[i].id;
-                                    target_list.stocks[item_id] = country_stocks[i];
-                                }
+        corsGet(stockAPI).then(function(res) {
+            try {
+                console.log('yata fetched');
+                const stock = JSON.parse(res)['stocks'];
+                //console.log(typeof(e),typeof(e.responseText))
+                //const stock = e.responseText['stocks'];
+                let target_list = {};
+                target_list['last-updated'] = now;
+                target_list['stocks'] = {};
+                if (stock) {
+                    //console.log(stock)
+                    for (let country3e in stock) {
+                        let buylist = {};
+                        for (let country in destination) {
+                            if (country3e == destination[country].name3e) {
+                                buylist = destination[country].buylist;
                             }
                         }
-                        window.localStorage.setItem("travel_stocks",JSON.stringify(target_list));
-                        const travel_text = travelText(target_list.stocks,0);
-                        $('#travel-hub').children().remove();
-                        $('#travel-hub').append(travel_text);
-                        const travel_des = getLocalStorage("travel","destination");
-                        const des = travel_des.split(" ")[0];
-                        if(des != 'Torn') {
-                            $('#'+des+'').addClass('t-red');
+
+                        const country_stocks = stock[country3e].stocks;
+
+                        for (let i=0;i<country_stocks.length;i++) {
+                            if (country_stocks[i].id in buylist) {
+                                const item_id = country_stocks[i].id;
+                                target_list.stocks[item_id] = country_stocks[i];
+                            }
                         }
                     }
-                } catch (error) {
-                    console.log(error);;
+                    window.localStorage.setItem("travel_stocks",JSON.stringify(target_list));
+                    const travel_text = travelText(target_list.stocks,0);
+                    $('#travel-hub').children().remove();
+                    $('#travel-hub').append(travel_text);
+                    const travel_des = getLocalStorage("travel","destination");
+                    const des = travel_des.split(" ")[0];
+                    if(des != 'Torn') {
+                        $('#'+des+'').addClass('t-red');
+                    }
                 }
-            },
-            onerror: (err) => {
-                console.log('yata load failed');
-            },
-            onloadstart : (err) => {
-                console.log('yata start to fetch');
-            },
-            ontimeout: (err) => {
-                console.log('yata fetch timeout');
+            } catch (error) {
+                console.log(error);;
             }
+        }).catch(function(err) {
+            console.log(`load failed: ${err}`);
         });
     }
 
