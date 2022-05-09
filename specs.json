@@ -36,9 +36,17 @@
         "file": "GlodenSnitch.js",
         "name": "接机小助手",
         "author": "mirrorhye[2564936]",
-        "description": "[PDA暂未适配] 接机小助手自动更新版",
+        "description": "[PDA不要用这个]接机小助手自动更新版",
         "detail": "展示一个飞贼悬浮框用以显示可以接机的对象",
         "version": "v2.0.0"
+    },
+    {
+        "file": "GlodenSnitch_PDA.js",
+        "name": "接机小助手-PDA",
+        "author": "mirrorhye[2564936]",
+        "description": "接机小助手PDA版",
+        "detail": "展示一个飞贼悬浮框用以显示可以接机的对象",
+        "version": "v2.1.1"
     },
     {
         "file": "bazaar_price_helper.js",
