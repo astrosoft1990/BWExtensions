@@ -44,7 +44,7 @@
     if (API_KEY == '*') {
         API_KEY = mir_get("APIKey");
     }
-    console.log(API_KEY)
+    // console.log(API_KEY);
 
     function prices_choose_strategy(item_prices) {
         try {

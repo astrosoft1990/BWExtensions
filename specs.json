@@ -83,6 +83,14 @@
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3"
+    },
+    {
+        "file": "test.js",
+        "name": "测试脚本",
+        "author": "author",
+        "description": "description",
+        "detail": "detail",
+        "version": "v1.0.0"
     }
 
     
