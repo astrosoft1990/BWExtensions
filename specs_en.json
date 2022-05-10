@@ -8,22 +8,6 @@
         "version": "v2.2.2"
     },
     {
-        "file": "iStock.js",
-        "name": "iStock",
-        "author": "htys[1545351]",
-        "description": "enhance stock market",
-        "detail": "为股票界面增加大量统计数据信息",
-        "version": "v1.9.3"
-    },
-    {
-        "file": "iStock_AcronymReplace.js",
-        "name": "iStock AcronymReplace",
-        "author": "",
-        "description": "add acronymReplace to each stock",
-        "detail": "iStock拓展",
-        "version": "v1.9.3"
-    },
-    {
         "file": "crime_shortcut.js",
         "name": "Crime Shortcut",
         "author": "mirrorhye[2564936]",
@@ -40,23 +24,6 @@
         "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
         "match": "torn.com/bazaar",
         "version": "v1.0.1"
-    },
-    {
-        "file": "Simple_Attacking_Page.js",
-        "name": "Simple Attacking Page",
-        "author": "htys[1545351]",
-        "description": "block human image in attack page",
-        "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
-        "version": "v1.0.0"
-    },
-    {
-        "file": "christmas_torn.js",
-        "name": "Christmas Town Helper",
-        "author": "Hardy[2131687]",
-        "description": "christmas torn script",
-        "detail": "圣诞小镇辅助脚本",
-        "match": "torn.com/christmas_town",
-        "version": "v2.3.3"
     },
     {
         "file": "test.js",
