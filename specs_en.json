@@ -1,0 +1,71 @@
+[
+    {
+        "file": "iTravel.js",
+        "name": "iTravel",
+        "author": "htys[1545351]",
+        "description": "show aboard stocks in clock",
+        "detail": "在时钟处显示飞花库存",
+        "version": "v2.2.2"
+    },
+    {
+        "file": "iStock.js",
+        "name": "iStock",
+        "author": "htys[1545351]",
+        "description": "enhance stock data",
+        "detail": "为股票界面增加大量统计数据信息",
+        "version": "v1.9.3"
+    },
+    {
+        "file": "iStock_AcronymReplace.js",
+        "name": "iStock股票缩写",
+        "author": "",
+        "description": "add acronymReplace to each stock",
+        "detail": "iStock拓展",
+        "version": "v1.9.3"
+    },
+    {
+        "file": "crime_shortcut.js",
+        "name": "犯罪捷径",
+        "author": "mirrorhye[2564936]",
+        "description": "convience crime",
+        "detail": "day day 烧仓库",
+        "match": "torn.com/crimes.php",
+        "version": "v1.0.2"
+    },
+    {
+        "file": "bazaar_price_helper.js",
+        "name": "bazaar助手",
+        "author": "mirrorhye[2564936]",
+        "description": "my bazaar auto price",
+        "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
+        "match": "torn.com/bazaar",
+        "version": "v1.0.1"
+    },
+    {
+        "file": "Simple_Attacking_Page.js",
+        "name": "战斗页面简化",
+        "author": "htys[1545351]",
+        "description": "block human image in attack page",
+        "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
+        "version": "v1.0.0"
+    },
+    {
+        "file": "christmas_torn.js",
+        "name": "Christmas Town Helper",
+        "author": "Hardy[2131687]",
+        "description": "christmas torn script",
+        "detail": "圣诞小镇辅助脚本",
+        "match": "torn.com/christmas_town",
+        "version": "v2.3.3"
+    },
+    {
+        "file": "test.js",
+        "name": "测试脚本",
+        "author": "author",
+        "description": "description",
+        "detail": "detail",
+        "version": "v1.0.0"
+    }
+
+    
+]
