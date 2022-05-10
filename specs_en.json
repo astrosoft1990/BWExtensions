@@ -17,7 +17,7 @@
     },
     {
         "file": "iStock_AcronymReplace.js",
-        "name": "iStock股票缩写",
+        "name": "iStock AcronymReplace",
         "author": "",
         "description": "add acronymReplace to each stock",
         "detail": "iStock拓展",
@@ -25,7 +25,7 @@
     },
     {
         "file": "crime_shortcut.js",
-        "name": "犯罪捷径",
+        "name": "Crime Shortcut",
         "author": "mirrorhye[2564936]",
         "description": "convience crime",
         "detail": "day day 烧仓库",
@@ -34,7 +34,7 @@
     },
     {
         "file": "bazaar_price_helper.js",
-        "name": "bazaar助手",
+        "name": "Bazaar Price Helper",
         "author": "mirrorhye[2564936]",
         "description": "my bazaar auto price",
         "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
@@ -43,7 +43,7 @@
     },
     {
         "file": "Simple_Attacking_Page.js",
-        "name": "战斗页面简化",
+        "name": "Simple Attacking Page",
         "author": "htys[1545351]",
         "description": "block human image in attack page",
         "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
@@ -60,7 +60,7 @@
     },
     {
         "file": "test.js",
-        "name": "测试脚本",
+        "name": "Test Script",
         "author": "author",
         "description": "description",
         "detail": "detail",
