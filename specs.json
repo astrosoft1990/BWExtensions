@@ -95,10 +95,10 @@
     {
         "file": "test.js",
         "name": "测试脚本",
-        "author": "author",
-        "description": "description",
-        "detail": "detail",
-        "version": "v1.0.0"
+        "author": "author2",
+        "description": "description2",
+        "detail": "detail2",
+        "version": "v1.0.1"
     }
 
     
