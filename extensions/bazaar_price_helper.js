@@ -11,6 +11,16 @@
 (function() {
     'use strict';
 
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.BazaarPriceHelper) return;
+        __win.BazaarPriceHelper = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     function mir_get(key, preset) {
         if (window.localStorage === undefined) {
             return preset;

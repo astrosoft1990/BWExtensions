@@ -10,6 +10,17 @@
 
 (function() {
     'use strict';
+
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.iStock) return;
+        __win.iStock = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     const $ = window.jQuery;
 
     const is_history_low_allowed = true; //史低功能是否开启

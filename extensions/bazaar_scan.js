@@ -11,6 +11,17 @@
 
 (function() {
     'use strict';
+
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.BazaarScan) return;
+        __win.BazaarScan = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     //const $ = window.jQuery;
     const stock_refresh = 10;    //库存数据源刷新频率，默认10分钟刷新一次（最小5）
     const basic_refresh = 1;     //基础刷新频率，默认1分钟最多读取2条torn api（最小1）

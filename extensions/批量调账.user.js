@@ -11,6 +11,17 @@
 
 (function() {
     'use strict';
+
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.PLTZ) return;
+        __win.PLTZ = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     const $ = window.jQuery;
     const cache = window.localStorage.getItem("BALANCE_ADJUSTMENT");
     let json = cache ? JSON.parse(cache) : {};

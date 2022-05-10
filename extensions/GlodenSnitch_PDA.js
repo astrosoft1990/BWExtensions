@@ -11,6 +11,16 @@
 (function() {
     'use strict';
 
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.GoldenSnitch) return;
+        __win.GoldenSnitch = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     if ($('#gsp').get(0)) {
         return;
     }

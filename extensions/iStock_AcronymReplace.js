@@ -9,6 +9,17 @@
 
 (function() {
     'use strict';
+
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.iStock_AcronymReplace) return;
+        __win.iStock_AcronymReplace = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     const $ = window.jQuery;
     const stocks = {
         "1": {

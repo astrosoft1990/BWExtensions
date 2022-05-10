@@ -15,6 +15,17 @@
 // ==/UserScript==
 (function() {
     'use strict';
+
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.ChristmasTownHelper) return;
+        __win.ChristmasTownHelper = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     let version = "2.3.3";
     // Thanks to xedx for Dark Mode support
     // Thanks Kafia for beep effect

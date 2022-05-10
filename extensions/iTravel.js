@@ -11,6 +11,17 @@
 
 (function() {
     'use strict';
+
+    // avoid over loading in pda
+    try {
+        const __win = window.unsafeWindow || window;
+        if (__win.iTravel) return;
+        __win.iTravel = true;
+        window = __win; // fix unsafeWindow
+    } catch (err) {
+        console.log(err);
+    }
+
     //const $ = window.jQuery;
 
     // 跨域操作
