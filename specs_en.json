@@ -2,7 +2,7 @@
     {
         "file": "iTravel.js",
         "name": "iTravel",
-        "author": "htys[1545351]",
+        "author": "author",
         "description": "show aboard stocks in clock",
         "detail": "在时钟处显示飞花库存",
         "version": "v2.2.2"
@@ -10,7 +10,7 @@
     {
         "file": "crime_shortcut.js",
         "name": "Crime Shortcut",
-        "author": "mirrorhye[2564936]",
+        "author": "author",
         "description": "more convenient crime",
         "detail": "day day 烧仓库",
         "match": "torn.com/crimes.php",
@@ -19,7 +19,7 @@
     {
         "file": "bazaar_price_helper.js",
         "name": "Bazaar Price Helper",
-        "author": "mirrorhye[2564936]",
+        "author": "author",
         "description": "my bazaar auto price",
         "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
         "match": "torn.com/bazaar",
