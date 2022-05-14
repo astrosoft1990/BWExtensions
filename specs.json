@@ -51,7 +51,7 @@
     {
         "file": "faction_simplified_log_view.js",
         "name": "帮派物品消息合并汉化",
-        "author": "",
+        "author": "stella[2671581]汉化",
         "description": "帮派物品租借/使用消息合并及汉化，提高了可读性",
         "detail": "帮派物品租借/使用消息合并及汉化，提高了可读性",
         "match": "torn.com/factions.php\\?step=your",
