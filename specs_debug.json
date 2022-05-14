@@ -55,7 +55,7 @@
         "author": "stella[2671581]",
         "description": "帮派物品租借/使用消息合并及汉化，提高了可读性",
         "detail": "帮派物品租借/使用消息合并及汉化，提高了可读性",
-        "match": "torn.com/factions.php?step=your",
+        "match": "torn.com/factions.php\\?step=your",
         "version": "v1.0.0"
     },
     {

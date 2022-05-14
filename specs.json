@@ -50,6 +50,15 @@
         "version": "v1.0.0"
     },
     {
+        "file": "faction_simplified_log_view.js",
+        "name": "帮派物品消息合并汉化",
+        "author": "stella[2671581]",
+        "description": "帮派物品租借/使用消息合并及汉化，提高了可读性",
+        "detail": "帮派物品租借/使用消息合并及汉化，提高了可读性",
+        "match": "torn.com/factions.php\\?step=your",
+        "version": "v1.0.0"
+    },
+    {
         "file": "bazaar_scan.js",
         "name": "BazaarScan",
         "author": "zaiyiding[2722372]",
@@ -75,15 +84,5 @@
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3"
-    },
-    {
-        "file": "test.js",
-        "name": "测试脚本",
-        "author": "author2",
-        "description": "description2",
-        "detail": "detail2",
-        "version": "v1.0.1"
     }
-
-    
 ]
