@@ -1,5 +1,4 @@
-[
-    {
+[{
         "file": "iTravel.js",
         "name": "iTravel飞花助手",
         "author": "htys[1545351]",
@@ -52,7 +51,7 @@
     {
         "file": "faction_simplified_log_view.js",
         "name": "帮派物品消息合并汉化",
-        "author": "stella[2671581]",
+        "author": "",
         "description": "帮派物品租借/使用消息合并及汉化，提高了可读性",
         "detail": "帮派物品租借/使用消息合并及汉化，提高了可读性",
         "match": "torn.com/factions.php\\?step=your",
