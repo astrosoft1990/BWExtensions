@@ -1,0 +1,87 @@
+[
+    {
+        "file": "iTravel.js",
+        "name": "iTravel飞花助手",
+        "author": "htys[1545351]",
+        "description": "在时钟处显示飞花库存",
+        "detail": "在时钟处显示飞花库存",
+        "version": "v2.2.2"
+    },
+    {
+        "file": "iStock.js",
+        "name": "iStock",
+        "author": "htys[1545351]",
+        "description": "股票界面增强",
+        "detail": "为股票界面增加大量统计数据信息",
+        "version": "v1.9.3"
+    },
+    {
+        "file": "iStock_AcronymReplace.js",
+        "name": "iStock股票缩写",
+        "author": "",
+        "description": "为每支股票添加一个缩写",
+        "detail": "iStock拓展",
+        "version": "v1.9.3"
+    },
+    {
+        "file": "crime_shortcut.js",
+        "name": "犯罪捷径",
+        "author": "mirrorhye[2564936]",
+        "description": "更方便的快速犯罪",
+        "detail": "day day 烧仓库",
+        "match": "torn.com/crimes.php",
+        "version": "v1.0.2"
+    },
+    {
+        "file": "bazaar_price_helper.js",
+        "name": "bazaar助手",
+        "author": "mirrorhye[2564936]",
+        "description": "自动帮商品填上合适的市场价",
+        "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
+        "match": "torn.com/bazaar",
+        "version": "v1.0.1"
+    },
+    {
+        "file": "Simple_Attacking_Page.js",
+        "name": "战斗页面简化",
+        "author": "htys[1545351]",
+        "description": "屏蔽进攻页面的人物形象",
+        "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
+        "version": "v1.0.0"
+    },
+    {
+        "file": "faction_simplified_log_view.js",
+        "name": "帮派物品消息合并汉化",
+        "author": "stella[2671581]",
+        "description": "帮派物品租借/使用消息合并及汉化，提高了可读性",
+        "detail": "帮派物品租借/使用消息合并及汉化，提高了可读性",
+        "version": "v1.0.0"
+    },
+    {
+        "file": "bazaar_scan.js",
+        "name": "BazaarScan",
+        "author": "zaiyiding[2722372]",
+        "description": "提示bazaar中的低价商品",
+        "detail": "定时地扫描bazaar, 在商品低于设定价格时发出通知, 目前只扫描了xan",
+        "match": "torn.com/loader.php?sid=attack",
+        "version": "v1.0.0"
+    },
+    {
+        "file": "批量调账.user.js",
+        "name": "批量调账",
+        "author": "htys[1545351]",
+        "description": "批量调整帮派账务",
+        "detail": "yyds!",
+        "match": "torn.com/factions.php",
+        "version": "v1.1.0"
+    },
+    {
+        "file": "christmas_torn.js",
+        "name": "Christmas Town Helper",
+        "author": "Hardy[2131687]",
+        "description": "圣诞小镇辅助脚本",
+        "detail": "圣诞小镇辅助脚本",
+        "match": "torn.com/christmas_town",
+        "version": "v2.3.3"
+    }
+]
