@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bazaar Price Helper
 // @namespace    SMTH
-// @version      1.0.2
+// @version      1.0.3
 // @description  自动填充bazaar上架价格
 // @author       Mirrorhye[2564936]
 // @match        https://www.torn.com/bazaar.php*
@@ -18,7 +18,7 @@
         __win.BazaarPriceHelper = true;
         window = __win; // fix unsafeWindow
     } catch (err) {
-        console.log(err);
+        mir_log(err);
     }
 
     function mir_get(key, preset) {
@@ -42,24 +42,39 @@
         }
     }
 
+    function mir_log(s) {
+        console.log(`[BPH] ${s}`)
+    }
+
     let positionKey = "bph_position";
     let position = mir_get(positionKey, 0);
     mir_set(positionKey, position);
     let premiumKey = "bph_premium";
     let premium = mir_get(premiumKey, 0.0);
     mir_set(premiumKey, premium);
+    let baseKey = "bph_base";
+    let base = mir_get(baseKey, '%');
+    mir_set(baseKey, base);
 
     /// 你的api_key, 如果装了冰蛙 这里就不用改
     let API_KEY = '*'
     if (API_KEY == '*') {
         API_KEY = mir_get("APIKey");
     }
-    // console.log(API_KEY);
+    // mir_log(API_KEY);
 
     function prices_choose_strategy(item_prices) {
         try {
-            return item_prices[Math.max(Math.min(item_prices.length, parseInt(mir_get(positionKey, 0))), 0)] * (1+mir_get(premiumKey, 0.0)/100.0);
-        } catch {
+            let position = Math.max(Math.min(item_prices.length, parseInt(mir_get(positionKey, 0))), 0);
+            let premium = parseFloat(mir_get(premiumKey, 0.0));
+            let base = mir_get(baseKey, '%');
+            if (base === '%') {
+                return item_prices[position] * (1 + (premium / 100.0));
+            } else {
+                return item_prices[position] + premium;
+            }
+        } catch(err) {
+            mir_log(err);
             return 0
         }
     }
@@ -73,44 +88,74 @@
         let last_manage_item_count = 0
 
         function onPositionChange() {
-            let position = parseInt($("#bph_position").attr('value'));
+            let position = parseInt($("#bph_position_select").attr('value'));
             position = Math.max(Math.min(49, position), 0);
-            $("#bph_position").attr('value', position);
+            $("#bph_position_select").attr('value', position);
+            let prev_position = mir_get(positionKey);
+            mir_log(`[position] change: ${prev_position} -> ${position}`);
             mir_set(positionKey, position);
-            last_additem_item_count = 0
-            last_manage_item_count = 0
+            last_additem_item_count = 0;
+            last_manage_item_count = 0;
         }
+
         function onPremiumChange() {
             let premium = parseFloat($("#bph_preInput").attr('value'));
             if (isNaN(premium)) {
                 premium = 0.0;
             }
             $("#bph_preInput").attr('value', premium);
+            let prev_premium = mir_get(premiumKey);
             mir_set(premiumKey, premium);
+            mir_log(`[premium] change: ${prev_premium} -> ${premium}`);
             last_additem_item_count = 0
             last_manage_item_count = 0
         }
 
+        function onBaseChange() {
+            let base = $("#bph_base_select").attr('value');
+            $("#bph_base_select").attr('value', base);
+            let prev_base = mir_get(baseKey);
+            mir_set(baseKey, base);
+            mir_log(`[base] change: ${prev_base} -> ${base}`);
+            last_additem_item_count = 0
+            last_manage_item_count = 0
+        }
+
+
         function updateUI() {
-            console.log(`等待页面更新`);
+            mir_log(`等待页面更新`);
 
             if ($("div[class^=appHeaderWrapper]").length > 0 && $("div[class=bph_header]").length == 0) {
-                let premium = mir_get(premiumKey, 0.0);
-                let position = Math.max(Math.min(49, parseInt(mir_get(positionKey, 0))), 0);
-                let select = `<select id="bph_position">`;
-                for (let i = 0; i < 50; i++) {
-                    if (i == position) {
-                        select += `<option value="${i}" selected="selected">${i}</option>`
-                    } else {
-                        select += `<option value="${i}">${i}</option>`
+                function positionSelect() {
+                    let position = Math.max(Math.min(49, parseInt(mir_get(positionKey, 0))), 0);
+                    let html = `<select id="bph_position_select">`;
+                    for (let i = 0; i < 50; i++) {
+                        if (i == position) {
+                            html += `<option value="${i}" selected="selected">${i}</option>`;
+                        } else {
+                            html += `<option value="${i}">${i}</option>`;
+                        }
                     }
+                    html += `</select>`;
+                    return html;
                 }
-                select += `</select>`
-                $("div[class^=appHeaderWrapper]").append(`<div class="bph_header" style="padding:10px 0 0 0"><div style="background-color:white;padding:10px;border:1px solid black;">以市场第${select}低的价位为基准&nbsp;&nbsp;溢价+
-                <input id="bph_preInput" value="${premium}" style="background-color:lightgray;width:30px;padding: 0 5px 0 5px;font-weight:bold;color:#333;text-align: center;">%
+
+                function baseSelect() {
+                    let base = mir_get(baseKey, 0);
+                    let html = `<select id="bph_base_select">`;
+                    html += `<option value="%" ${base === '%' ?'selected="selected"' :""}>%</option>`;
+                    html += `<option value=" " ${base === ' ' ?'selected="selected"' :""}> </option>`;
+                    html += `</select>`;
+                    return html;
+                }
+
+                let premium = mir_get(premiumKey, 0.0);
+                $("div[class^=appHeaderWrapper]").append(`<div class="bph_header" style="padding:10px 0 0 0"><div style="background-color:white;padding:10px;border:1px solid black;">以市场第${positionSelect()}低的价位为基准&nbsp;&nbsp;溢价+
+                <input id="bph_preInput" value="${premium}" style="background-color:lightgray;width:30px;padding: 0 5px 0 5px;font-weight:bold;color:#333;text-align: center;">${baseSelect()}
                 </div><hr class="page-head-delimiter m-top10 m-bottom10"></div>`);
                 $("#bph_preInput").change(onPremiumChange);
-                $("#bph_position").change(onPositionChange);
+                $("#bph_position_select").change(onPositionChange);
+                $("#bph_base_select").change(onBaseChange);
             }
 
             let additem_page_items = document.querySelectorAll("[data-group='child']");
@@ -135,7 +180,7 @@
             item_input.dispatchEvent(new Event("input"));
         }
 
-        console.log(`[additem] - 更新需要填充的价格`);
+        mir_log(`[additem] - 更新需要填充的价格`);
         for (let i = 0; i < page_items.length; i++) {
             let item = page_items[i];
 
@@ -150,7 +195,7 @@
 
     function fill_prices_at_manage(page_items) {
         function fill_item_price(item_input, item_price, item_detail1, item_detail2, old_price) {
-            console.log(`price: ${item_price}`);
+            mir_log(`price: ${item_price}`);
 
             item_detail1.innerText = `${old_price} => ${item_price}`;
             let color = "green";
@@ -165,7 +210,7 @@
             item_input.value = item_price + '-';
         }
 
-        console.log(`[manage] - 更新需要填充的价格`);
+        mir_log(`[manage] - 更新需要填充的价格`);
         for (let i = 0; i < page_items.length; i++) {
             let item = page_items[i];
 
@@ -191,21 +236,21 @@
         if (lowest_price_cache[item_id]) {
             // 缓存命中
             let item_prices = lowest_price_cache[item_id];
-            // console.log(`lowest缓存: ${item_id} - prices:${item_prices}`);
+            // mir_log(`lowest缓存: ${item_id} - prices:${item_prices}`);
             callback(item_prices);
         } else {
             // 请求API
             let API = `https://api.torn.com/market/${item_id}?selections=&key=${API_KEY}`;
-            console.log(`请求: ${API}, item id: ${item_id}`);
+            mir_log(`请求: ${API}, item id: ${item_id}`);
             fetch(API)
                 .then((res) => {
                 if(res.ok){
                     return res.json();
                 } else {
-                    console.log(`出现未知错误 ${res}`);
+                    mir_log(`出现未知错误 ${res}`);
                 }
             }, networkError => {
-                console.log(`出现网络错误 ${networkError}`);
+                mir_log(`出现网络错误 ${networkError}`);
             }).then((json_data) => {
                 let item_prices = [];
                 json_data.bazaar.forEach(e => {
@@ -215,7 +260,7 @@
                         item_prices.push(e.cost)
                     }
                 });
-                // console.log(`[caching] ${item_id} - price:${item_prices}`);
+                // mir_log(`[caching] ${item_id} - price:${item_prices}`);
                 lowest_price_cache[item_id] = item_prices.sort((x,y) => x-y);
                 callback(item_prices);
             });

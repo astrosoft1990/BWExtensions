@@ -38,7 +38,7 @@
         "description": "自动帮商品填上合适的市场价",
         "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
         "match": "torn.com/bazaar",
-        "version": "v1.0.2"
+        "version": "v1.0.3"
     },
     {
         "file": "Simple_Attacking_Page.js",
