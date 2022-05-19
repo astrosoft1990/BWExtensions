@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.3
+// @version      2.0.5
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -103,7 +103,7 @@
         return Number(num.replace(/\$|,/g, ''));
     }
 
-    async function fetchLowestPointPrice() {
+    async function fetchLowestPoint() {
         return fetch(`https://api.torn.com/market/?selections=pointsmarket&key=${API_KEY}`)
             .then((res) => res.json())
             .then((res) => {
@@ -112,8 +112,8 @@
                 Object.keys(points).forEach((key) => {
                     let info = points[key];
                     let price = parseInt(info.cost);
-                    if (!lowest || price < lowest) {
-                        lowest = price;
+                    if (!lowest || price < parseInt(lowest.cost)) {
+                        lowest = info;
                     }
                 });
                 return lowest;
@@ -121,12 +121,12 @@
             .catch(e => console.log("fetch error", e));
     }
     
-    async function fetchLowestItemPrice(itemName) {
+    async function fetchLowestItem(itemName) {
         const itemId = tornItems[itemName];
         return fetch(`https://api.torn.com/market/${itemId}?selections=&key=${API_KEY}`)
             .then((res) => res.json())
             .then((res) => {
-                return res.bazaar[0].cost;
+                return res.bazaar[0];
             })
             .catch(e => console.log("fetch error", e));
     }
@@ -260,9 +260,9 @@
                 const filtered = Object.keys(tornItems).filter((name) => name.toLowerCase() === inputName.toLowerCase());
                 if (filtered.length > 0) {
                     const itemName = filtered[0];
-                    fetchLowestItemPrice(itemName).then((price) => {
+                    fetchLowestItem(itemName).then((lowest) => {
                         if (inputName === $(this).val()) {
-                            $('#shzs-item-current-price').text(`${itemName}当前最低价: ${parseInt(price)}`);
+                            $('#shzs-item-current-price').text(`${itemName}当前最低价: ${parseInt(lowest.cost)}`);
                         }
                     });
                 } else {
@@ -315,10 +315,10 @@
 
             // pt
             if (pointPrice > 0) {
-                fetchLowestPointPrice().then((price) => {
-                    mlog(`pt watch: ${price} - ${pointPrice}`);
-                    if (price <= pointPrice) {
-                        NotificationComm(`PT ${price} < ${pointPrice} 低价啦`, 'https://www.torn.com/pmarket.php');
+                fetchLowestPoint().then((lowest) => {
+                    mlog(`pt watch: ${lowest.cost} - ${pointPrice}`);
+                    if (lowest.cost <= pointPrice) {
+                        NotificationComm(`PT ${lowest.cost} < ${pointPrice} (x${lowest.quantity}) 低价啦 | 总价: ${lowest.total_cost}`, 'https://www.torn.com/pmarket.php');
                     }
                 });
             }
@@ -327,10 +327,10 @@
             Object.keys(watchingItems).forEach((itemName) => {
                 let info = watchingItems[itemName];
                 if (info.watched) {
-                    fetchLowestItemPrice(itemName).then((price) => {
-                        mlog(`${itemName} watch: ${price} - ${info.price}`);
-                        if (price <= info.price) {
-                            NotificationComm(`${itemName} ${price} < ${info.price} 低价啦`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
+                    fetchLowestItem(itemName).then((lowest) => {
+                        mlog(`${itemName} watch: ${lowest.cost} - ${info.price}`);
+                        if (lowest.cost <= info.price) {
+                            NotificationComm(`${itemName} ${lowest.cost} < ${info.price} (x${lowest.quantity}) 低价啦 | 总价: ${lowest.quantity * lowest.cost}`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
                         }
                     });
                 }
