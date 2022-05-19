@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      1.0
+// @version      2.0
 // @description
 // @author       guoguo
-// @match        https://www.torn.com/*.php*
-// @grant        GM_xmlhttpRequest
+// @match        https://www.torn.com/*
 //
 // ==/UserScript==
 
@@ -22,147 +21,329 @@
         console.log(err);
     }
 
-    //const $ = window.jQuery;
-    const stock_refresh = 10;    //库存数据源刷新频率，默认10分钟刷新一次（最小5）
-    const basic_refresh = 1;     //基础刷新频率，默认1分钟最多读取2条torn api（最小1）
-    const notify = true;         //是否开启通知提醒
-    const notify_minute = 2;     //提前几分钟提醒，默认提前2分钟提醒（最小1）
-    const pointPrice = 45000;
-    let APIKey = getAPIKey();
-    const items = {
-        "Xanax": {
-           "name": "Xan",
-		   "id":206,
-		   "price":844000,
-            },
+    // set/get
+    function ext_getValue(key, default_value=null) {
+        let val = window.localStorage.getItem(key);
+        if (val === undefined || val === null) {
+            return default_value;
         }
-
-
-	if(basic_refresh >= 1 && APIKey != null && APIKey != "") {
-        scanBazaar();
-        const intervalID = setInterval(scanBazaar, 60000 * basic_refresh);
-	 }
-
-    function getAPIKey() {
-        let key = window.localStorage.getItem("APIKey");
-        if(key == null || key == "") {
-            console.log('no key...');
-            if(window.location.href.indexOf('preferences.php') >= 0) {
-                console.log('on setting page');
-                const refresher = setInterval(function() {
-                    console.log('refreshing');
-                    $("input").each(function() {
-                        const input_value = $(this).val();
-                        if (input_value.length == 16) {
-                            key = input_value;
-                            window.localStorage.setItem("APIKey",key);
-                            console.log("apikey get "+key);
-                            clearInterval(refresher);
-                            alert('APIKey设置成功，点击确定前往主页');
-                            window.location.href = 'https://www.torn.com/index.php';
-                        }
-                    });
-                }, 300);
+        try {
+            val = JSON.parse(val);
+            if (val == '[]') {
+                val = []
             }
-            else {
-                console.log('switch to setting page');
-                alert('APIKey未设置或设置错误，点击确定前往设置页面');
-                window.location.href = 'https://www.torn.com/preferences.php#tab=api';
-            }
-        }
-        return key;
-    }
-
-    function getLocalStorage(key1,key2) {
-        if(!window.localStorage) {
-            return false;
-        }
-        else if(!window.localStorage.getItem(key1)) {
-            return false;
-        }
-        else {
-            const json = JSON.parse(window.localStorage.getItem(key1));
-            if(!json[key2]) {
-                return false;
-            }
-            else {
-                return json[key2];
-            }
+            return val;
+        } catch (err) {
+            console.log(err);
+            console.log(val);
+            return val;
         }
     }
-
-    function updateLocalStorage(key1,key2,value) {
-        if(!window.localStorage) {
-            return false;
-        }
-        else if(!window.localStorage.getItem(key1)) {
-            return false;
-        }
-        else {
-            const json = JSON.parse(window.localStorage.getItem(key1));
-            json[key2] = value;
-            window.localStorage.setItem(key1,JSON.stringify(json));
-        }
+    
+    function ext_setValue(key, val) {
+        return window.localStorage.setItem(key, JSON.stringify(val));
     }
 
+    function mlog(s) {
+        console.log(`[扫货助手] ${s}`);
+    }
 
-    function scanBazaar() {
-			for(let item in items){
-				const tmpId = items[item].id;
-                const API = `https://api.torn.com/market/${tmpId}?selections=&key=${APIKey}`;;
-				 fetch(API)
+    const $ = window.jQuery;
+
+
+    let API_KEY = '*'
+    if (API_KEY == '*') {
+        API_KEY = localStorage.getItem("APIKey");
+    }
+    
+    let watchLoop = ext_getValue("shzs-watch-loop", 30);
+    let pointPrice = ext_getValue("shzs-pt-price", 0);
+    let watchingItems = ext_getValue("shzs-watching-items", {
+        "Xanax" : {
+            "price": 830000,
+            "watched": true,
+        }
+    });
+    let latestRefresh = ext_getValue('shzs-latest-refresh', 0);
+
+    let tornItems = ext_getValue('shzs-tornItems', {});
+    async function updateTornItems() {
+        const res = await fetch(`https://api.torn.com/torn/?selections=items&key=${API_KEY}`);
+        const tornItems = (await res.json()).items;
+        let dict = {};
+        Object.keys(tornItems).forEach((itemId) => {
+            dict[tornItems[itemId].name] = itemId;
+        });
+        ext_setValue('shzs-tornItems', dict);
+        tornItems = ext_getValue('shzs-tornItems', {});
+    }
+    if (Object.keys(tornItems).length <= 0) {
+        updateTornItems();
+    }
+
+    function formatMoney(num) {
+        return Number(num.replace(/\$|,/g, ''));
+    }
+
+    async function fetchLowestPointPrice() {
+        return fetch(`https://api.torn.com/market/?selections=pointsmarket&key=${API_KEY}`)
             .then((res) => res.json())
             .then((res) => {
-                if(res.bazaar[0].cost <= items[item].price){
-                    console.log('ibazaar',res.bazaar[0].cost, items[item].price);
-					NotificationComm(items[item].name + '<' + items[item].price +' 低价啦 ' + ' current price :' + res.bazaar[0].cost);
-                }
+                let points = res.pointsmarket;
+                let lowest = null;
+                Object.keys(points).forEach((key) => {
+                    let info = points[key];
+                    let price = parseInt(info.cost);
+                    if (!lowest || price < lowest) {
+                        lowest = price;
+                    }
+                });
+                return lowest;
             })
             .catch(e => console.log("fetch error", e));
-			}
-
+    }
+    
+    async function fetchLowestItemPrice(itemName) {
+        const itemId = tornItems[itemName];
+        return fetch(`https://api.torn.com/market/${itemId}?selections=&key=${API_KEY}`)
+            .then((res) => res.json())
+            .then((res) => {
+                return res.bazaar[0].cost;
+            })
+            .catch(e => console.log("fetch error", e));
     }
 
-    function NotificationComm(title, option) {
-        if('Notification' in window){// 判断浏览器是否兼容Notification消息通知
-            window.Notification.requestPermission(function(res){// 获取用户是否允许通知权限
-                if(res === 'granted'){// 允许
+    // 状态栏图标
+    $("[class^=status-icons]").prepend('<li id="shzs-icon-btn" class="icon6___SHZS" title="扫货助手" style="cursor: pointer; background-image:url(/images/v2/editor/emoticons.svg); background-position: -140px -42px;"></li>')
+    $('#shzs-icon-btn').click(function() {
+        function makeWrapper() {
+            let wrapperHTML = `
+            <div id="shzs-wrapper" style="width: inherit;">
+                <div style="margin:10px; border:1px solid darkgray; font-size:14px; text-align:center;">
+                    <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - 设置</div>
+                    <div style="background-color: darkgray;height: 1px;"></div>
+                    <div style="margin:5px 0px;">
+                        监视间隔(s): </span><input id="shzs-watch-loop" type="text" class="border-round" style="height:20px; width:170px; margin: 0 5px; padding: 0 5px;" placeholder="${`当前: ${watchLoop}, 0为不监视`}">
+                    </div>
+                    <div style="background-color: darkgray;height: 1px;"></div>
+                    <div style="margin:5px 0px;">
+                        监视PT价格: </span><input id="shzs-pt-input" type="text" class="border-round shzs-price-input" style="height:20px; width:170px; margin: 0 5px; padding: 0 5px;" placeholder="${`当前: ${pointPrice}, 0为不监视`}">
+                    </div>
+                    <div style="background-color: darkgray;height: 1px;"></div>
+                    <div style="margin:5px 0px;">
+                        <input id="shzs-item-name" list="shzs-dl-tornitems" placeholder="商品名称" class="border-round" style="height:25px; width:130px; margin: 0 5px; padding: 0 5px;">
+                        <input id="shzs-item-price" placeholder="监视价格, 0则删除" class="border-round shzs-price-input" style="height:25px; width:120px; margin: 0 5px; padding: 0 5px;">
+                        <button id="shzs-item-add" class="torn-btn" style="height: 25px;padding: 2px 5px;">添加</button>
+                        <div id="shzs-item-current-price" style="color: darkslategray;font-style: italic;font-size: 12px; margin:5px;"></div>
+                        <datalist id="shzs-dl-tornitems">
+                        </datalist>
+                    </div>
+                    <div id="shzs-watching-wrapper" style="padding:0 0 5px 0">
+                        <table id="shzs-watching-tb" style="margin:auto; min-width:350px; background-color:white;">
+                        </table>
+                    <div>
+                </div>
+            </div>`;
+
+            function makeItemOptions() {
+                let options = '';
+                Object.keys(tornItems).forEach((key) => {
+                    options += `<option value="${key}">`;
+                })
+                $('#shzs-dl-tornitems').html(options);
+            }
+
+            function makeWatchingTable(){
+                let html = `<tr>
+                <th width="50px">监视</td>
+                <th>商品名</td>
+                <th>价格</td>
+                <tr>`;
+                Object.keys(watchingItems).forEach((itemName) => {
+                    const info = watchingItems[itemName];
+                    html += `<tr>
+                    <td><input type="checkbox" ${info.watched ?'checked="checked"' :''}" class="shzs-watch-cb" data-name="${itemName}"></td>
+                    <td>${itemName}</td>
+                    <td>${parseInt(info.price)}</td>
+                    <tr>`
+                });
+
+                $('#shzs-watching-tb').html(html);
+                $("#shzs-watching-tb th").attr("style", "border: 1px solid darkgray;padding: 5px;background-color: black;color: white;font-weight: bold;text-align:center;");      
+                $("#shzs-watching-tb td").attr("style", "border: 1px solid darkgray;padding: 2px;background-color: white;color: black;text-align:center;");      
+
+                // checkbox事件
+                $('.shzs-watch-cb').change(function(){
+                    const itemName = $(this).attr('data-name');
+                    watchingItems[itemName].watched = !watchingItems[itemName].watched;
+                    mlog(`watch ${itemName}: ${!watchingItems[itemName].watched} -> ${watchingItems[itemName].watched}`);
+                    ext_setValue('shzs-watching-items', watchingItems);
+                    watchingItems = ext_getValue('shzs-watching-items');
+                    makeWatchingTable();
+                });
+            }
+
+            $('#mainContainer').prepend(wrapperHTML);
+
+            // input格式化
+            $('.shzs-price-input').tornInputMoney({
+                "groupMoneyClass": null,
+            });
+            $('.shzs-price-input').parent().css('display', 'inline-block');
+
+            // 添加下拉框
+            makeItemOptions();
+
+            makeWatchingTable();
+
+            // watch loop
+            $('#shzs-watch-loop').on('change', function(){
+                let prev = watchLoop;
+                let curr = $(this).val();
+                if (parseInt(curr) >= 0) {
+                    ext_setValue("shzs-watch-loop", curr);
+                    watchLoop = ext_getValue("shzs-watch-loop");
+                    $(this).val('');
+                    $(this).attr('placeholder', `${`当前: ${watchLoop}, 0为不监视`}`);
+                    mlog(`watch loop ${prev} -> ${pointPrice}`);
+                }
+            });
+
+            // pt
+            $('#shzs-pt-input').on('change', function(){
+                let prev = pointPrice;
+                let curr = formatMoney($(this).val());
+                if (parseInt(curr) >= 0) {
+                    ext_setValue("shzs-pt-price", curr);
+                    pointPrice = ext_getValue("shzs-pt-price");
+                    $(this).val('');
+                    $(this).attr('placeholder', `${`当前: ${pointPrice}, 0为不监视`}`);
+                    mlog(`price ${prev} -> ${pointPrice}`);
+                }
+            });
+
+            // 输入商品名事件
+            $("#shzs-item-name").on('input', function(){
+                const inputName = $(this).val();
+                const filtered = Object.keys(tornItems).filter((name) => name.toLowerCase() === inputName.toLowerCase());
+                if (filtered.length > 0) {
+                    const itemName = filtered[0];
+                    fetchLowestItemPrice(itemName).then((price) => {
+                        if (inputName === $(this).val()) {
+                            $('#shzs-item-current-price').text(`${itemName}当前最低价: ${parseInt(price)}`);
+                        }
+                    });
+                } else {
+                    $('#shzs-item-current-price').text('');
+                }
+            });
+
+            // 提交商品事件
+            $("#shzs-item-add").on('click', function(){
+                const inputName = $('#shzs-item-name').val();
+                const price = formatMoney($("#shzs-item-price").val());
+                if (price < 0) {
+                    return;
+                }
+                const filtered = Object.keys(tornItems).filter((name) => name.toLowerCase() === inputName.toLowerCase());
+                console.log(filtered);
+                if (filtered.length > 0) {
+                    const itemName = filtered[0];
+                    if (price == 0) {
+                        delete watchingItems[itemName];
+                        mlog(`delete ${itemName}`);
+                    } else {
+                        watchingItems[itemName] = {
+                            'price': price,
+                            'watched': true
+                        };
+                        mlog(`add ${JSON.stringify(watchingItems[itemName])}`);
+                    }
+                    ext_setValue('shzs-watching-items', watchingItems);
+                    watchingItems = ext_getValue('shzs-watching-items');
+                    makeWatchingTable();
+                }
+            });
+        }
+
+        if ($('#shzs-wrapper').length > 0) {
+            $('#shzs-wrapper').remove();
+        } else {
+            makeWrapper();
+        }
+    });
+
+
+    setInterval(function(){
+        let currentTimestamp = new Date().getTime() / 1000.0;
+        if (watchLoop > 0 && currentTimestamp - latestRefresh > watchLoop) {
+            mlog(`refresh ${latestRefresh} -> ${currentTimestamp}`);
+            ext_setValue('shzs-latest-refresh', currentTimestamp);
+            latestRefresh = ext_getValue('shzs-latest-refresh');
+
+            // pt
+            if (pointPrice > 0) {
+                fetchLowestPointPrice().then((price) => {
+                    mlog(`pt watch: ${price} - ${pointPrice}`);
+                    if (price <= pointPrice) {
+                        NotificationComm(`PT ${price} < ${pointPrice} 低价啦`, 'https://www.torn.com/pmarket.php');
+                    }
+                });
+            }
+
+            // items
+            Object.keys(watchingItems).forEach((itemName) => {
+                let info = watchingItems[itemName];
+                if (info.watched) {
+                    fetchLowestItemPrice(itemName).then((price) => {
+                        mlog(`${itemName} watch: ${price} - ${info.price}`);
+                        if (price <= info.price) {
+                            NotificationComm(`${itemName} ${price} < ${info.price} 低价啦`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
+                        }
+                    });
+                }
+            });
+        }
+    }, 1000); 
+
+    function NotificationComm(title, url, option) {
+        if ('Notification' in window) { // 判断浏览器是否兼容Notification消息通知
+            window.Notification.requestPermission(function(res) { // 获取用户是否允许通知权限
+                if (res === 'granted') { // 允许
                     let notification = new Notification(title || '这是一条新消息', Object.assign({}, {
                         dir: "auto", // 字体排版,auto,lt,rt
                         icon: '', // 通知图标
                         body: '请尽快处理该消息', // 主体内容
                         renotify: false // 当有新消息提示时，是否一直关闭上一条提示
                     }, option || {}));
-                    notification.onerror = function(err){// error事件处理函数
+                    notification.onerror = function(err) { // error事件处理函数
                         throw err;
                     }
-                    notification.onshow = function(ev){// show事件处理函数
-                        console.log(ev);
+                    notification.onshow = function(ev) { // show事件处理函数
                     }
-                    notification.onclick = function(ev){// click事件处理函数
-                        console.log(ev);
+                    notification.onclick = function(ev) { // click事件处理函数
+                        window.open(url);
                         notification.close();
                     }
-                    notification.onclose = function(ev){// close事件处理函数
-                        console.log(ev);
+                    notification.onclose = function(ev) { // close事件处理函数
                     }
                 } else {
                     alert('该网站通知已被禁用，请在设置中允许');
                 }
             });
-        } else {// 兼容当前浏览器不支持Notification的情况
+        } else { // 兼容当前浏览器不支持Notification的情况
             const documentTitle = document.title,
                 index = 0;
-            const time = setInterval(function(){
+            const time = setInterval(function() {
                 index++;
-                if(index % 2){
+                if (index % 2) {
                     document.title = '【　　　】' + documentTitle;
                 } else {
                     document.title = '【新消息】' + documentTitle;
                 }
             }, 1000);
-            const fn = function(){
-                if(!document.hidden && document.visibilityState === 'visible'){
+            const fn = function() {
+                if (!document.hidden && document.visibilityState === 'visible') {
                     clearInterval(time);
                     document.title = documentTitle;
                 }
