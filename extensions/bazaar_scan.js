@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0
+// @version      2.0.1
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -133,7 +133,7 @@
                     <div style="margin:5px 0px;">
                         <input id="shzs-item-name" list="shzs-dl-tornitems" placeholder="商品名称" class="border-round" style="height:25px; width:130px; margin: 0 5px; padding: 0 5px;">
                         <input id="shzs-item-price" placeholder="监视价格, 0则删除" class="border-round shzs-price-input" style="height:25px; width:120px; margin: 0 5px; padding: 0 5px;">
-                        <button id="shzs-item-add" class="torn-btn" style="height: 25px;padding: 2px 5px;">添加</button>
+                        <button id="shzs-item-add" class="border-round" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#65a5d1; color:white;">添加</button>
                         <div id="shzs-item-current-price" style="color: darkslategray;font-style: italic;font-size: 12px; margin:5px;"></div>
                         <datalist id="shzs-dl-tornitems">
                         </datalist>
