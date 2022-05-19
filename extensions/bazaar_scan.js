@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.1
+// @version      2.0.2
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -205,7 +205,7 @@
                     watchLoop = ext_getValue("shzs-watch-loop");
                     $(this).val('');
                     $(this).attr('placeholder', `${`当前: ${watchLoop}, 0为不监视`}`);
-                    mlog(`watch loop ${prev} -> ${pointPrice}`);
+                    mlog(`watch loop ${prev} -> ${watchLoop}`);
                 }
             });
 
