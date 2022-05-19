@@ -64,7 +64,7 @@
         "author": "zaiyiding[2722372]",
         "description": "扫货小助手2.0大更新~",
         "detail": "定时地扫描bazaar, 在商品低于设定价格时发出通知",
-        "version": "v2.0.2"
+        "version": "v2.0.3"
     },
     {
         "file": "批量调账.user.js",

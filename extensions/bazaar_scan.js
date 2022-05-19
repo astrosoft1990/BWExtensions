@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.2
+// @version      2.0.3
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -50,12 +50,13 @@
 
     const $ = window.jQuery;
 
-
     let API_KEY = '*'
     if (API_KEY == '*') {
         API_KEY = localStorage.getItem("APIKey");
     }
     
+    let watching = false;
+
     let watchLoop = ext_getValue("shzs-watch-loop", 30);
     let pointPrice = ext_getValue("shzs-pt-price", 0);
     let watchingItems = ext_getValue("shzs-watching-items", {
@@ -80,6 +81,23 @@
     if (Object.keys(tornItems).length <= 0) {
         updateTornItems();
     }
+
+    $("head").after(`
+        <style>
+        .shzs-working {
+            animation:spin 1000ms;
+            animation-iteration-count: infinite;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+        </style>
+    `);
 
     function formatMoney(num) {
         return Number(num.replace(/\$|,/g, ''));
@@ -120,7 +138,7 @@
             let wrapperHTML = `
             <div id="shzs-wrapper" style="width: inherit;">
                 <div style="margin:10px; border:1px solid darkgray; font-size:14px; text-align:center;">
-                    <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - 设置</div>
+                    <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - <button id="shzs-item-start" class="border-round" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#8fbc8f; color:white;">开始</button></div>
                     <div style="background-color: darkgray;height: 1px;"></div>
                     <div style="margin:5px 0px;">
                         监视间隔(s): </span><input id="shzs-watch-loop" type="text" class="border-round" style="height:20px; width:170px; margin: 0 5px; padding: 0 5px;" placeholder="${`当前: ${watchLoop}, 0为不监视`}">
@@ -195,6 +213,20 @@
             makeItemOptions();
 
             makeWatchingTable();
+
+            // start / pause
+            $('#shzs-item-start').on('click', function(){
+                if (watching) {
+                    $(this).css('background-color', '#8fbc8f');
+                    $(this).text('开始');
+                    $('#shzs-icon-btn').removeClass('shzs-working');
+                } else {
+                    $(this).css('background-color', '#ff7373');
+                    $(this).text('暂停');
+                    $('#shzs-icon-btn').addClass('shzs-working');
+                }
+                watching = !watching;
+            });
 
             // watch loop
             $('#shzs-watch-loop').on('change', function(){
@@ -276,7 +308,7 @@
 
     setInterval(function(){
         let currentTimestamp = new Date().getTime() / 1000.0;
-        if (watchLoop > 0 && currentTimestamp - latestRefresh > watchLoop) {
+        if (watching && watchLoop > 0 && currentTimestamp - latestRefresh > watchLoop) {
             mlog(`refresh ${latestRefresh} -> ${currentTimestamp}`);
             ext_setValue('shzs-latest-refresh', currentTimestamp);
             latestRefresh = ext_getValue('shzs-latest-refresh');
