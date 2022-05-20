@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.8
+// @version      2.0.9
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -9,80 +9,80 @@
 // ==/UserScript==
 
 (function() {
-    'use strict';
+        'use strict';
 
-    // avoid over loading in pda
-    try {
-        const __win = window.unsafeWindow || window;
-        if (__win.BazaarScan) return;
-        __win.BazaarScan = true;
-        window = __win; // fix unsafeWindow
-    } catch (err) {
-        console.log(err);
-    }
-
-    // set/get
-    function ext_getValue(key, default_value=null) {
-        let val = window.localStorage.getItem(key);
-        if (val === undefined || val === null) {
-            return default_value;
-        }
+        // avoid over loading in pda
         try {
-            val = JSON.parse(val);
-            if (val == '[]') {
-                val = []
-            }
-            return val;
+            const __win = window.unsafeWindow || window;
+            if (__win.BazaarScan) return;
+            __win.BazaarScan = true;
+            window = __win; // fix unsafeWindow
         } catch (err) {
             console.log(err);
-            console.log(val);
-            return val;
         }
-    }
-    
-    function ext_setValue(key, val) {
-        return window.localStorage.setItem(key, JSON.stringify(val));
-    }
 
-    function mlog(s) {
-        console.log(`[扫货助手] ${s}`);
-    }
-
-    const $ = window.jQuery;
-
-    let API_KEY = '*'
-    if (API_KEY == '*') {
-        API_KEY = localStorage.getItem("APIKey");
-    }
-    
-    let watching = false;
-
-    let watchLoop = ext_getValue("shzs-watch-loop", 30);
-    let pointPrice = ext_getValue("shzs-pt-price", 0);
-    let watchingItems = ext_getValue("shzs-watching-items", {
-        "Xanax" : {
-            "price": 830000,
-            "watched": true,
+        // set/get
+        function ext_getValue(key, default_value = null) {
+            let val = window.localStorage.getItem(key);
+            if (val === undefined || val === null) {
+                return default_value;
+            }
+            try {
+                val = JSON.parse(val);
+                if (val == '[]') {
+                    val = []
+                }
+                return val;
+            } catch (err) {
+                console.log(err);
+                console.log(val);
+                return val;
+            }
         }
-    });
-    let latestRefresh = ext_getValue('shzs-latest-refresh', 0);
 
-    let tornItems = ext_getValue('shzs-tornItems', {});
-    async function updateTornItems() {
-        const res = await fetch(`https://api.torn.com/torn/?selections=items&key=${API_KEY}`);
-        const tornItems = (await res.json()).items;
-        let dict = {};
-        Object.keys(tornItems).forEach((itemId) => {
-            dict[tornItems[itemId].name] = itemId;
+        function ext_setValue(key, val) {
+            return window.localStorage.setItem(key, JSON.stringify(val));
+        }
+
+        function mlog(s) {
+            console.log(`[扫货助手] ${s}`);
+        }
+
+        const $ = window.jQuery;
+
+        let API_KEY = '*'
+        if (API_KEY == '*') {
+            API_KEY = localStorage.getItem("APIKey");
+        }
+
+        let watching = false;
+
+        let watchLoop = ext_getValue("shzs-watch-loop", 30);
+        let pointPrice = ext_getValue("shzs-pt-price", 0);
+        let watchingItems = ext_getValue("shzs-watching-items", {
+            "Xanax": {
+                "price": 830000,
+                "watched": true,
+            }
         });
-        ext_setValue('shzs-tornItems', dict);
-        tornItems = ext_getValue('shzs-tornItems', {});
-    }
-    if (Object.keys(tornItems).length <= 0) {
-        updateTornItems();
-    }
+        let latestRefresh = ext_getValue('shzs-latest-refresh', 0);
 
-    $("head").after(`
+        let tornItems = ext_getValue('shzs-tornItems', {});
+        async function updateTornItems() {
+            const res = await fetch(`https://api.torn.com/torn/?selections=items&key=${API_KEY}`);
+            const tornItems = (await res.json()).items;
+            let dict = {};
+            Object.keys(tornItems).forEach((itemId) => {
+                dict[tornItems[itemId].name] = itemId;
+            });
+            ext_setValue('shzs-tornItems', dict);
+            tornItems = ext_getValue('shzs-tornItems', {});
+        }
+        if (Object.keys(tornItems).length <= 0) {
+            updateTornItems();
+        }
+
+        $("head").after(`
         <style>
         .shzs-pointer {
             cursor:pointer;
@@ -133,70 +133,70 @@
         </style>
     `);
 
-    function formatMoney(num) {
-        return Number(num.replace(/\$|,/g, ''));
-    }
-
-    function formatMoney2(num) {
-        return num.toString().replace(/\d{1,3}(?=(\d{3})+$)/g, function(s) { return s + "," }).replace(/^[^\$]\S+/, function(s) { return s });
-    }
-
-    function formatNumber2(x) {
-        if (x < 0) {
-            return '-' + formatNumber2(-x);
-        } else if (x == 0) {
-            return '0';
-        } else if (x <= 1) {
-            return parseFloat((x * 100).toFixed(2)) + '%'
-        } else if (x < 1e3) {
-            return '' + parseInt(x);
-        } else if (x >= 1e3 && x < 1e6) {
-            return parseFloat((x / 1e3).toFixed(2)) + 'k';
-        } else if (x >= 1e6 && x < 1e9) {
-            return parseFloat((x / 1e6).toFixed(2)) + 'm';
-        } else if (x >= 1e9 && x < 1e12) {
-            return parseFloat((x / 1e9).toFixed(2)) + 'b';
-        } else if (x >= 1e12 && x < 1e15) {
-            return parseFloat((x / 1e12).toFixed(2)) + 't';
-        } else if (x >= 1e15) {
-            return "MAX";
+        function formatMoney(num) {
+            return Number(num.replace(/\$|,/g, ''));
         }
-        return 'error';
-    }
 
-    async function fetchLowestPoint() {
-        return fetch(`https://api.torn.com/market/?selections=pointsmarket&key=${API_KEY}`)
-            .then((res) => res.json())
-            .then((res) => {
-                let points = res.pointsmarket;
-                let lowest = null;
-                Object.keys(points).forEach((key) => {
-                    let info = points[key];
-                    let price = parseInt(info.cost);
-                    if (!lowest || price < parseInt(lowest.cost)) {
-                        lowest = info;
-                    }
-                });
-                return lowest;
-            })
-            .catch(e => console.log("fetch error", e));
-    }
-    
-    async function fetchLowestItem(itemName) {
-        const itemId = tornItems[itemName];
-        return fetch(`https://api.torn.com/market/${itemId}?selections=&key=${API_KEY}`)
-            .then((res) => res.json())
-            .then((res) => {
-                return res.bazaar[0];
-            })
-            .catch(e => console.log("fetch error", e));
-    }
+        function formatMoney2(num) {
+            return num.toString().replace(/\d{1,3}(?=(\d{3})+$)/g, function(s) { return s + "," }).replace(/^[^\$]\S+/, function(s) { return s });
+        }
 
-    // 状态栏图标
-    $("[class^=status-icons]").prepend('<li id="shzs-icon-btn" class="icon6___SHZS" title="扫货助手" style="cursor: pointer; background-image:url(/images/v2/editor/emoticons.svg); background-position: -140px -42px;"></li>')
-    $('#shzs-icon-btn').click(function() {
-        function makeWrapper() {
-            let wrapperHTML = `
+        function formatNumber2(x) {
+            if (x < 0) {
+                return '-' + formatNumber2(-x);
+            } else if (x == 0) {
+                return '0';
+            } else if (x <= 1) {
+                return parseFloat((x * 100).toFixed(2)) + '%'
+            } else if (x < 1e3) {
+                return '' + parseInt(x);
+            } else if (x >= 1e3 && x < 1e6) {
+                return parseFloat((x / 1e3).toFixed(2)) + 'k';
+            } else if (x >= 1e6 && x < 1e9) {
+                return parseFloat((x / 1e6).toFixed(2)) + 'm';
+            } else if (x >= 1e9 && x < 1e12) {
+                return parseFloat((x / 1e9).toFixed(2)) + 'b';
+            } else if (x >= 1e12 && x < 1e15) {
+                return parseFloat((x / 1e12).toFixed(2)) + 't';
+            } else if (x >= 1e15) {
+                return "MAX";
+            }
+            return 'error';
+        }
+
+        async function fetchLowestPoint() {
+            return fetch(`https://api.torn.com/market/?selections=pointsmarket&key=${API_KEY}`)
+                .then((res) => res.json())
+                .then((res) => {
+                    let points = res.pointsmarket;
+                    let lowest = null;
+                    Object.keys(points).forEach((key) => {
+                        let info = points[key];
+                        let price = parseInt(info.cost);
+                        if (!lowest || price < parseInt(lowest.cost)) {
+                            lowest = info;
+                        }
+                    });
+                    return lowest;
+                })
+                .catch(e => console.log("fetch error", e));
+        }
+
+        async function fetchLowestItem(itemName) {
+            const itemId = tornItems[itemName];
+            return fetch(`https://api.torn.com/market/${itemId}?selections=&key=${API_KEY}`)
+                .then((res) => res.json())
+                .then((res) => {
+                    return res.bazaar[0];
+                })
+                .catch(e => console.log("fetch error", e));
+        }
+
+        // 状态栏图标
+        $("[class^=status-icons]").prepend('<li id="shzs-icon-btn" class="icon6___SHZS" title="扫货助手" style="cursor: pointer; background-image:url(/images/v2/editor/emoticons.svg); background-position: -140px -42px;"></li>')
+        $('#shzs-icon-btn').click(function() {
+                    function makeWrapper() {
+                        let wrapperHTML = `
             <div id="shzs-wrapper" style="width: inherit;">
                 <div style="margin:10px; border:1px solid darkgray; font-size:14px; text-align:center;">
                     <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - <button id="shzs-item-start" class="border-round shzs-pointer" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#8fbc8f; color:white;">开始</button></div>
@@ -220,16 +220,37 @@
                     <div id="shzs-watching-wrapper" style="padding:0 0 5px 0">
                         <table id="shzs-watching-tb" style="margin:auto; min-width:350px; background-color:white;">
                         </table>
+                        <div id="shzs-api-alert" style="margin: 5px;font-size: 11px;font-style: italic;"></div>
                     <div>
                 </div>
             </div>`;
 
-            function makeItemOptions() {
+            function makeItemOptions(){
                 let options = '';
                 Object.keys(tornItems).forEach((key) => {
                     options += `<option value="${key}">`;
                 })
                 $('#shzs-dl-tornitems').html(options);
+            }
+
+            function makeApiAlert(){
+                // api使用提示
+                if (watchLoop <= 0) {
+                    $('#shzs-api-alert').text('');
+                } else {
+                    let apiUseCountPerLoop = 0;
+                    if (pointPrice > 0) apiUseCountPerLoop += 1;
+                    Object.keys(watchingItems).forEach((key) => {
+                        let info = watchingItems[key];
+                        if (info.watched) apiUseCountPerLoop += 1;
+                    });
+                    const apiUsePerSecond = Math.ceil(apiUseCountPerLoop * 60.0 / watchLoop);
+                    $('#shzs-api-alert').text(`预计每分钟api使用次数: ${apiUsePerSecond}`);
+                    if (apiUsePerSecond < 25) $('#shzs-api-alert').css('color', 'darkgreen');
+                    else if (apiUsePerSecond < 50) $('#shzs-api-alert').css('color', 'darkblue');
+                    else if (apiUsePerSecond < 75) $('#shzs-api-alert').css('color', 'darkred');
+                    else $('#shzs-api-alert').css('color', 'red');
+                }
             }
 
             function makeWatchingTable(){
@@ -252,6 +273,8 @@
                 $('#shzs-watching-tb').html(html);
                 $("#shzs-watching-tb th").attr("style", "border: 1px solid darkgray;padding: 5px;background-color: black;color: white;font-weight: bold;text-align:center;");      
                 $("#shzs-watching-tb td").attr("style", "border: 1px solid darkgray;padding: 4px 8px;background-color: white;color: black;text-align:center;");      
+
+                makeApiAlert();
 
                 // checkbox事件
                 $('.shzs-watchtb-checkbox').bind('change', function(){
@@ -316,6 +339,7 @@
                     $(this).val('');
                     $(this).attr('placeholder', `${`当前: ${watchLoop}, 0为不监视`}`);
                     mlog(`watch loop ${prev} -> ${watchLoop}`);
+                    makeApiAlert();
                 }
             });
 
@@ -329,6 +353,7 @@
                     $(this).val('');
                     $(this).attr('placeholder', `${`当前: ${pointPrice}, 0为不监视`}`);
                     mlog(`price ${prev} -> ${pointPrice}`);
+                    makeApiAlert();
                 }
             });
 
