@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.10
+// @version      2.0.11
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -435,7 +435,7 @@
                 fetchLowestPoint().then((lowest) => {
                     mlog(`pt watch: ${lowest.cost} - ${pointPrice}`);
                     if (lowest.cost <= pointPrice) {
-                        NotificationComm(`[扫货助手] PT ${lowest.cost} <= ${pointPrice}`, `(x${lowest.quantity}) | 总价: ${formatNumber2(parseInt(lowest.total_cost))}`, 'https://www.torn.com/pmarket.php');
+                        NotificationComm(`[扫货助手] PT ${lowest.cost}`, `${formatMoney2(lowest.cost)} x${lowest.quantity} | 总价: ${formatNumber2(parseInt(lowest.total_cost))}`, 'https://www.torn.com/pmarket.php');
                     }
                 });
             }
@@ -447,7 +447,7 @@
                     fetchLowestItem(itemName).then((lowest) => {
                         mlog(`${itemName} watch: ${lowest.cost} - ${info.price}`);
                         if (lowest.cost <= info.price) {
-                            NotificationComm(`[扫货助手] ${itemName} ${lowest.cost} <= ${info.price}`, `(x${lowest.quantity}) | 总价: ${formatNumber2(lowest.quantity * lowest.cost)}`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
+                            NotificationComm(`[扫货助手] ${itemName} ${formatNumber2(lowest.cost)}`, `${formatMoney2(lowest.cost)} x${lowest.quantity} | 总价: ${formatNumber2(lowest.quantity * lowest.cost)}`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
                         }
                     });
                 }
