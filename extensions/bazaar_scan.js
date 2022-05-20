@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.6
+// @version      2.0.8
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -137,6 +137,33 @@
         return Number(num.replace(/\$|,/g, ''));
     }
 
+    function formatMoney2(num) {
+        return num.toString().replace(/\d{1,3}(?=(\d{3})+$)/g, function(s) { return s + "," }).replace(/^[^\$]\S+/, function(s) { return s });
+    }
+
+    function formatNumber2(x) {
+        if (x < 0) {
+            return '-' + formatNumber2(-x);
+        } else if (x == 0) {
+            return '0';
+        } else if (x <= 1) {
+            return parseFloat((x * 100).toFixed(2)) + '%'
+        } else if (x < 1e3) {
+            return '' + parseInt(x);
+        } else if (x >= 1e3 && x < 1e6) {
+            return parseFloat((x / 1e3).toFixed(2)) + 'k';
+        } else if (x >= 1e6 && x < 1e9) {
+            return parseFloat((x / 1e6).toFixed(2)) + 'm';
+        } else if (x >= 1e9 && x < 1e12) {
+            return parseFloat((x / 1e9).toFixed(2)) + 'b';
+        } else if (x >= 1e12 && x < 1e15) {
+            return parseFloat((x / 1e12).toFixed(2)) + 't';
+        } else if (x >= 1e15) {
+            return "MAX";
+        }
+        return 'error';
+    }
+
     async function fetchLowestPoint() {
         return fetch(`https://api.torn.com/market/?selections=pointsmarket&key=${API_KEY}`)
             .then((res) => res.json())
@@ -210,19 +237,21 @@
                 <th width="50px">监视</th>
                 <th>商品名</th>
                 <th>价格</th>
+                <th>价格</th>
                 <tr>`;
                 Object.keys(watchingItems).forEach((itemName) => {
                     const info = watchingItems[itemName];
                     html += `<tr>
                     <td><input type="checkbox" ${info.watched ?'checked="checked"' :''}" class="shzs-watchtb-checkbox" data-name="${itemName}"></td>
                     <td class="shzs-watchtb-name shzs-pointer" data-name="${itemName}">${itemName}</td>
-                    <td class="shzs-watchtb-price shzs-pointer" data-price="${parseInt(info.price)}">${parseInt(info.price)}</td>
+                    <td class="shzs-watchtb-price shzs-pointer" data-price="${info.price}">${formatMoney2(info.price)}</td>
+                    <td class="shzs-watchtb-price shzs-pointer" data-price="${info.price}">${formatNumber2(info.price)}</td>
                     <tr>`
                 });
 
                 $('#shzs-watching-tb').html(html);
                 $("#shzs-watching-tb th").attr("style", "border: 1px solid darkgray;padding: 5px;background-color: black;color: white;font-weight: bold;text-align:center;");      
-                $("#shzs-watching-tb td").attr("style", "border: 1px solid darkgray;padding: 2px;background-color: white;color: black;text-align:center;");      
+                $("#shzs-watching-tb td").attr("style", "border: 1px solid darkgray;padding: 4px 8px;background-color: white;color: black;text-align:center;");      
 
                 // checkbox事件
                 $('.shzs-watchtb-checkbox').bind('change', function(){
@@ -245,6 +274,7 @@
                 $('.shzs-watchtb-price').bind('click', function(){
                     const itemPrice = $(this).attr('data-price');
                     $('#shzs-item-price').val(itemPrice);
+                    $('#shzs-item-price').trigger('input');
                 });
             }
 
@@ -380,7 +410,7 @@
                 fetchLowestPoint().then((lowest) => {
                     mlog(`pt watch: ${lowest.cost} - ${pointPrice}`);
                     if (lowest.cost <= pointPrice) {
-                        NotificationComm(`PT ${lowest.cost} < ${pointPrice} (x${lowest.quantity}) 低价啦 | 总价: ${lowest.total_cost}`, 'https://www.torn.com/pmarket.php');
+                        NotificationComm(`[扫货助手] PT ${lowest.cost} <= ${pointPrice}`, `(x${lowest.quantity}) | 总价: ${formatNumber2(parseInt(lowest.total_cost))}`, 'https://www.torn.com/pmarket.php');
                     }
                 });
             }
@@ -392,7 +422,7 @@
                     fetchLowestItem(itemName).then((lowest) => {
                         mlog(`${itemName} watch: ${lowest.cost} - ${info.price}`);
                         if (lowest.cost <= info.price) {
-                            NotificationComm(`${itemName} ${lowest.cost} < ${info.price} (x${lowest.quantity}) 低价啦 | 总价: ${lowest.quantity * lowest.cost}`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
+                            NotificationComm(`[扫货助手] ${itemName} ${lowest.cost} <= ${info.price}`, `(x${lowest.quantity}) | 总价: ${formatNumber2(lowest.quantity * lowest.cost)}`, `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
                         }
                     });
                 }
@@ -400,14 +430,14 @@
         }
     }, 500); 
 
-    function NotificationComm(title, url, option) {
+    function NotificationComm(title, body, url, option) {
         if ('Notification' in window) { // 判断浏览器是否兼容Notification消息通知
             window.Notification.requestPermission(function(res) { // 获取用户是否允许通知权限
                 if (res === 'granted') { // 允许
                     let notification = new Notification(title || '这是一条新消息', Object.assign({}, {
                         dir: "auto", // 字体排版,auto,lt,rt
                         icon: '', // 通知图标
-                        body: '请尽快处理该消息', // 主体内容
+                        body: body || '请尽快处理该消息', // 主体内容
                         renotify: false // 当有新消息提示时，是否一直关闭上一条提示
                     }, option || {}));
                     notification.onerror = function(err) { // error事件处理函数
