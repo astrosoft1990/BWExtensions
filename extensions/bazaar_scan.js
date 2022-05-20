@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.9
+// @version      2.0.10
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -70,10 +70,10 @@
         let tornItems = ext_getValue('shzs-tornItems', {});
         async function updateTornItems() {
             const res = await fetch(`https://api.torn.com/torn/?selections=items&key=${API_KEY}`);
-            const tornItems = (await res.json()).items;
+            const fetchItems = (await res.json()).items;
             let dict = {};
-            Object.keys(tornItems).forEach((itemId) => {
-                dict[tornItems[itemId].name] = itemId;
+            Object.keys(fetchItems).forEach((itemId) => {
+                dict[fetchItems[itemId].name] = itemId;
             });
             ext_setValue('shzs-tornItems', dict);
             tornItems = ext_getValue('shzs-tornItems', {});
