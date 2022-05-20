@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.5
+// @version      2.0.6
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -84,16 +84,50 @@
 
     $("head").after(`
         <style>
-        .shzs-working {
-            animation:spin 1000ms;
-            animation-iteration-count: infinite;
+        .shzs-pointer {
+            cursor:pointer;
         }
-        @keyframes spin {
+        .shzs-working {
+            animation:shzs-anim-spin 1000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+        @keyframes shzs-anim-spin {
             from {
                 transform: rotate(0turn);
             }
             to {
                 transform: rotate(1turn);
+            }
+        }
+        .shzs-dropin {
+            animation:shzs-anim-dropin 500ms;
+            animation-iteration-count: 1;
+            animation-timing-function: ease-in-out;
+        }
+        .shzs-dropout {
+            animation:shzs-anim-dropout 500ms;
+            animation-iteration-count: 1;
+            animation-timing-function: ease-in-out;
+        }
+        @keyframes shzs-anim-dropin {
+            from {
+                transform: rotate(-30deg) translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(0deg) translateY(0%);
+                opacity: 1;
+            }
+        }
+        @keyframes shzs-anim-dropout {
+            from {
+                transform: rotate(0deg) translateY(0%);
+                opacity: 1;
+            }
+            to {
+                transform: rotate(-30deg) translateY(-100%);
+                opacity: 0;
             }
         }
         </style>
@@ -138,7 +172,7 @@
             let wrapperHTML = `
             <div id="shzs-wrapper" style="width: inherit;">
                 <div style="margin:10px; border:1px solid darkgray; font-size:14px; text-align:center;">
-                    <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - <button id="shzs-item-start" class="border-round" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#8fbc8f; color:white;">开始</button></div>
+                    <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - <button id="shzs-item-start" class="border-round shzs-pointer" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#8fbc8f; color:white;">开始</button></div>
                     <div style="background-color: darkgray;height: 1px;"></div>
                     <div style="margin:5px 0px;">
                         监视间隔(s): </span><input id="shzs-watch-loop" type="text" class="border-round" style="height:20px; width:170px; margin: 0 5px; padding: 0 5px;" placeholder="${`当前: ${watchLoop}, 0为不监视`}">
@@ -149,9 +183,9 @@
                     </div>
                     <div style="background-color: darkgray;height: 1px;"></div>
                     <div style="margin:5px 0px;">
-                        <input id="shzs-item-name" list="shzs-dl-tornitems" placeholder="商品名称" class="border-round" style="height:25px; width:130px; margin: 0 5px; padding: 0 5px;">
-                        <input id="shzs-item-price" placeholder="监视价格, 0则删除" class="border-round shzs-price-input" style="height:25px; width:120px; margin: 0 5px; padding: 0 5px;">
-                        <button id="shzs-item-add" class="border-round" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#65a5d1; color:white;">添加</button>
+                        <input id="shzs-item-name" list="shzs-dl-tornitems" placeholder="商品名称" class="border-round" style="height:25px; width:125px; margin: 0 5px; padding: 0 5px;">
+                        <input id="shzs-item-price" placeholder="监视价格, 0则删除" class="border-round shzs-price-input" style="height:25px; width:125px; margin: 0 5px; padding: 0 5px;">
+                        <button id="shzs-item-add" class="border-round shzs-pointer" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#65a5d1; color:white;">添加</button>
                         <div id="shzs-item-current-price" style="color: darkslategray;font-style: italic;font-size: 12px; margin:5px;"></div>
                         <datalist id="shzs-dl-tornitems">
                         </datalist>
@@ -173,16 +207,16 @@
 
             function makeWatchingTable(){
                 let html = `<tr>
-                <th width="50px">监视</td>
-                <th>商品名</td>
-                <th>价格</td>
+                <th width="50px">监视</th>
+                <th>商品名</th>
+                <th>价格</th>
                 <tr>`;
                 Object.keys(watchingItems).forEach((itemName) => {
                     const info = watchingItems[itemName];
                     html += `<tr>
-                    <td><input type="checkbox" ${info.watched ?'checked="checked"' :''}" class="shzs-watch-cb" data-name="${itemName}"></td>
-                    <td>${itemName}</td>
-                    <td>${parseInt(info.price)}</td>
+                    <td><input type="checkbox" ${info.watched ?'checked="checked"' :''}" class="shzs-watchtb-checkbox" data-name="${itemName}"></td>
+                    <td class="shzs-watchtb-name shzs-pointer" data-name="${itemName}">${itemName}</td>
+                    <td class="shzs-watchtb-price shzs-pointer" data-price="${parseInt(info.price)}">${parseInt(info.price)}</td>
                     <tr>`
                 });
 
@@ -191,13 +225,26 @@
                 $("#shzs-watching-tb td").attr("style", "border: 1px solid darkgray;padding: 2px;background-color: white;color: black;text-align:center;");      
 
                 // checkbox事件
-                $('.shzs-watch-cb').change(function(){
+                $('.shzs-watchtb-checkbox').bind('change', function(){
                     const itemName = $(this).attr('data-name');
                     watchingItems[itemName].watched = !watchingItems[itemName].watched;
                     mlog(`watch ${itemName}: ${!watchingItems[itemName].watched} -> ${watchingItems[itemName].watched}`);
                     ext_setValue('shzs-watching-items', watchingItems);
                     watchingItems = ext_getValue('shzs-watching-items');
                     makeWatchingTable();
+                });
+
+                // name事件
+                $('.shzs-watchtb-name').bind('click', function(){
+                    const itemName = $(this).attr('data-name');
+                    $('#shzs-item-name').val(itemName);
+                    $('#shzs-item-name').trigger('input');
+                });
+
+                // price事件
+                $('.shzs-watchtb-price').bind('click', function(){
+                    const itemPrice = $(this).attr('data-price');
+                    $('#shzs-item-price').val(itemPrice);
                 });
             }
 
@@ -220,6 +267,7 @@
                     $(this).css('background-color', '#8fbc8f');
                     $(this).text('开始');
                     $('#shzs-icon-btn').removeClass('shzs-working');
+                    document.title = "[扫货暂停]"
                 } else {
                     $(this).css('background-color', '#ff7373');
                     $(this).text('暂停');
@@ -278,7 +326,7 @@
                     return;
                 }
                 const filtered = Object.keys(tornItems).filter((name) => name.toLowerCase() === inputName.toLowerCase());
-                console.log(filtered);
+                mlog(`add filter: ${filtered}`);
                 if (filtered.length > 0) {
                     const itemName = filtered[0];
                     if (price == 0) {
@@ -299,15 +347,29 @@
         }
 
         if ($('#shzs-wrapper').length > 0) {
-            $('#shzs-wrapper').remove();
+            $('#shzs-wrapper').addClass('shzs-dropout');
+            setTimeout(()=> {
+                $('#shzs-wrapper').remove();
+            }, 500);
         } else {
             makeWrapper();
+            $('#shzs-wrapper').addClass('shzs-dropin');
         }
     });
 
-
+    let dotCount = 0;
     setInterval(function(){
         let currentTimestamp = new Date().getTime() / 1000.0;
+        if (watching) {
+            dotCount = (dotCount + 1) % 4;
+            let title = `[扫货暂停中]`;
+            if (watchLoop > 0) {
+                let timeLeft = parseInt(watchLoop - (currentTimestamp - latestRefresh));
+                title = `[扫货中] (${timeLeft > 0 ?`${timeLeft}s` :'更新中'})`;
+            }
+            for (let i = 0; i < dotCount; ++i) title += '.';
+            document.title = title;
+        }
         if (watching && watchLoop > 0 && currentTimestamp - latestRefresh > watchLoop) {
             mlog(`refresh ${latestRefresh} -> ${currentTimestamp}`);
             ext_setValue('shzs-latest-refresh', currentTimestamp);
@@ -336,7 +398,7 @@
                 }
             });
         }
-    }, 1000); 
+    }, 500); 
 
     function NotificationComm(title, url, option) {
         if ('Notification' in window) { // 判断浏览器是否兼容Notification消息通知
