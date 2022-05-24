@@ -1,60 +1,60 @@
 [{
         "file": "iTravel.js",
-        "name": "iTravel飞花助手",
+        "name": "iTravel????",
         "author": "htys[1545351]",
-        "description": "在时钟处显示飞花库存",
-        "detail": "在时钟处显示飞花库存",
+        "description": "??????????",
+        "detail": "??????????",
         "version": "v2.2.2"
     },
     {
         "file": "iStock.js",
         "name": "iStock",
         "author": "htys[1545351]",
-        "description": "股票界面增强",
-        "detail": "为股票界面增加大量统计数据信息",
+        "description": "??????",
+        "detail": "???????????????",
         "version": "v1.9.3"
     },
     {
         "file": "iStock_AcronymReplace.js",
-        "name": "iStock股票缩写",
+        "name": "iStock????",
         "author": "",
-        "description": "为每支股票添加一个缩写",
-        "detail": "iStock拓展",
+        "description": "???????????",
+        "detail": "iStock??",
         "version": "v1.9.3"
     },
     {
         "file": "crime_shortcut.js",
-        "name": "犯罪捷径",
+        "name": "????",
         "author": "mirrorhye[2564936]",
-        "description": "更方便的快速犯罪",
-        "detail": "day day 烧仓库",
+        "description": "????????",
+        "detail": "day day ???",
         "match": "torn.com/crimes.php",
         "version": "v1.0.2"
     },
     {
         "file": "bazaar_price_helper_v102.js",
-        "name": "bazaar助手",
+        "name": "bazaar??",
         "author": "mirrorhye[2564936]",
-        "description": "自动帮商品填上合适的市场价",
-        "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
+        "description": "?????????????",
+        "detail": "?bazaar????????????, ?addItem/manageItem?????????",
         "match": "torn.com/bazaar",
         "version": "v1.0.3"
     },
     {
         "file": "Simple_Attacking_Page.js",
-        "name": "战斗页面简化",
+        "name": "??????",
         "author": "htys[1545351]",
-        "description": "屏蔽进攻页面的人物形象",
-        "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
+        "description": "???????????",
+        "detail": "???????????, ??????",
         "match": "torn.com/loader.php?sid=attack",
         "version": "v1.0.0"
     },
     {
         "file": "faction_simplified_log_view.js",
-        "name": "帮派物品消息合并汉化",
-        "author": "stella[2671581]汉化",
-        "description": "帮派物品租借/使用消息合并及汉化，提高了可读性",
-        "detail": "帮派物品租借/使用消息合并及汉化，提高了可读性",
+        "name": "??????????",
+        "author": "stella[2671581]??",
+        "description": "??????/????????????????",
+        "detail": "??????/????????????????",
         "match": "torn.com/factions.php\\?step=your",
         "version": "v1.0.0"
     },
@@ -62,15 +62,15 @@
         "file": "bazaar_scan.js",
         "name": "BazaarScan",
         "author": "zaiyiding[2722372]",
-        "description": "扫货小助手, 入口在左侧图标栏, make扫货卷again",
-        "detail": "定时地扫描bazaar, 在商品低于设定价格时发出通知",
+        "description": "?????, ????????, make???again",
+        "detail": "?????bazaar, ??????????????",
         "version": "v2.0.13"
     },
     {
-        "file": "批量调账.user.js",
-        "name": "批量调账",
+        "file": "????.user.js",
+        "name": "????",
         "author": "htys[1545351]",
-        "description": "批量调整帮派账务",
+        "description": "????????",
         "detail": "yyds!",
         "match": "torn.com/factions.php",
         "version": "v1.1.0"
@@ -79,8 +79,8 @@
         "file": "christmas_torn.js",
         "name": "Christmas Town Helper",
         "author": "Hardy[2131687]",
-        "description": "圣诞小镇辅助脚本",
-        "detail": "圣诞小镇辅助脚本",
+        "description": "????????",
+        "detail": "????????",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3"
     }
