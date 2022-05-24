@@ -1,60 +1,60 @@
 [{
         "file": "iTravel.js",
-        "name": "iTravelé£èŠ±åŠ©æ‰‹",
+        "name": "iTravel·É»¨ÖúÊÖ",
         "author": "htys[1545351]",
-        "description": "åœ¨æ—¶é’Ÿå¤„æ˜¾ç¤ºé£èŠ±åº“å­˜",
-        "detail": "åœ¨æ—¶é’Ÿå¤„æ˜¾ç¤ºé£èŠ±åº“å­˜",
+        "description": "ÔÚÊ±ÖÓ´¦ÏÔÊ¾·É»¨¿â´æ",
+        "detail": "ÔÚÊ±ÖÓ´¦ÏÔÊ¾·É»¨¿â´æ",
         "version": "v2.2.2"
     },
     {
         "file": "iStock.js",
         "name": "iStock",
         "author": "htys[1545351]",
-        "description": "è‚¡ç¥¨ç•Œé¢å¢å¼º",
-        "detail": "ä¸ºè‚¡ç¥¨ç•Œé¢å¢åŠ å¤§é‡ç»Ÿè®¡æ•°æ®ä¿¡æ¯",
+        "description": "¹ÉÆ±½çÃæÔöÇ¿",
+        "detail": "Îª¹ÉÆ±½çÃæÔö¼Ó´óÁ¿Í³¼ÆÊı¾İĞÅÏ¢",
         "version": "v1.9.3"
     },
     {
         "file": "iStock_AcronymReplace.js",
-        "name": "iStockè‚¡ç¥¨ç¼©å†™",
+        "name": "iStock¹ÉÆ±ËõĞ´",
         "author": "",
-        "description": "ä¸ºæ¯æ”¯è‚¡ç¥¨æ·»åŠ ä¸€ä¸ªç¼©å†™",
-        "detail": "iStockæ‹“å±•",
+        "description": "ÎªÃ¿Ö§¹ÉÆ±Ìí¼ÓÒ»¸öËõĞ´",
+        "detail": "iStockÍØÕ¹",
         "version": "v1.9.3"
     },
     {
         "file": "crime_shortcut.js",
-        "name": "çŠ¯ç½ªæ·å¾„",
+        "name": "·¸×ï½İ¾¶",
         "author": "mirrorhye[2564936]",
-        "description": "æ›´æ–¹ä¾¿çš„å¿«é€ŸçŠ¯ç½ª",
-        "detail": "day day çƒ§ä»“åº“",
+        "description": "¸ü·½±ãµÄ¿ìËÙ·¸×ï",
+        "detail": "day day ÉÕ²Ö¿â",
         "match": "torn.com/crimes.php",
         "version": "v1.0.2"
     },
     {
         "file": "bazaar_price_helper_v102.js",
-        "name": "bazaaråŠ©æ‰‹",
+        "name": "bazaarÖúÊÖ",
         "author": "mirrorhye[2564936]",
-        "description": "è‡ªåŠ¨å¸®å•†å“å¡«ä¸Šåˆé€‚çš„å¸‚åœºä»·",
-        "detail": "åœ¨bazaaré¡µé¢ä¸Šæ–¹å¯ä»¥é€‰æ‹©ä»·æ ¼åŸºæ•°, åœ¨addItem/manageItemé¡µé¢ä¼šè‡ªåŠ¨å¡«ä¸Šä»·æ ¼",
+        "description": "×Ô¶¯°ïÉÌÆ·ÌîÉÏºÏÊÊµÄÊĞ³¡¼Û",
+        "detail": "ÔÚbazaarÒ³ÃæÉÏ·½¿ÉÒÔÑ¡Ôñ¼Û¸ñ»ùÊı, ÔÚaddItem/manageItemÒ³Ãæ»á×Ô¶¯ÌîÉÏ¼Û¸ñ",
         "match": "torn.com/bazaar",
         "version": "v1.0.3"
     },
     {
         "file": "Simple_Attacking_Page.js",
-        "name": "æˆ˜æ–—é¡µé¢ç®€åŒ–",
+        "name": "Õ½¶·Ò³Ãæ¼ò»¯",
         "author": "htys[1545351]",
-        "description": "å±è”½è¿›æ”»é¡µé¢çš„äººç‰©å½¢è±¡",
-        "detail": "å±è”½è¿›æ”»é¡µé¢çš„äººç‰©å½¢è±¡, æé«˜åŠ è½½é€Ÿåº¦",
+        "description": "ÆÁ±Î½ø¹¥Ò³ÃæµÄÈËÎïĞÎÏó",
+        "detail": "ÆÁ±Î½ø¹¥Ò³ÃæµÄÈËÎïĞÎÏó, Ìá¸ß¼ÓÔØËÙ¶È",
         "match": "torn.com/loader.php?sid=attack",
         "version": "v1.0.0"
     },
     {
         "file": "faction_simplified_log_view.js",
-        "name": "å¸®æ´¾ç‰©å“æ¶ˆæ¯åˆå¹¶æ±‰åŒ–",
-        "author": "stella[2671581]æ±‰åŒ–",
-        "description": "å¸®æ´¾ç‰©å“ç§Ÿå€Ÿ/ä½¿ç”¨æ¶ˆæ¯åˆå¹¶åŠæ±‰åŒ–ï¼Œæé«˜äº†å¯è¯»æ€§",
-        "detail": "å¸®æ´¾ç‰©å“ç§Ÿå€Ÿ/ä½¿ç”¨æ¶ˆæ¯åˆå¹¶åŠæ±‰åŒ–ï¼Œæé«˜äº†å¯è¯»æ€§",
+        "name": "°ïÅÉÎïÆ·ÏûÏ¢ºÏ²¢ºº»¯",
+        "author": "stella[2671581]ºº»¯",
+        "description": "°ïÅÉÎïÆ·×â½è/Ê¹ÓÃÏûÏ¢ºÏ²¢¼°ºº»¯£¬Ìá¸ßÁË¿É¶ÁĞÔ",
+        "detail": "°ïÅÉÎïÆ·×â½è/Ê¹ÓÃÏûÏ¢ºÏ²¢¼°ºº»¯£¬Ìá¸ßÁË¿É¶ÁĞÔ",
         "match": "torn.com/factions.php\\?step=your",
         "version": "v1.0.0"
     },
@@ -62,15 +62,15 @@
         "file": "bazaar_scan.js",
         "name": "BazaarScan",
         "author": "zaiyiding[2722372]",
-        "description": "æ‰«è´§å°åŠ©æ‰‹, å…¥å£åœ¨å·¦ä¾§å›¾æ ‡æ , makeæ‰«è´§å·again",
-        "detail": "å®šæ—¶åœ°æ‰«æbazaar, åœ¨å•†å“ä½äºè®¾å®šä»·æ ¼æ—¶å‘å‡ºé€šçŸ¥",
+        "description": "É¨»õĞ¡ÖúÊÖ, Èë¿ÚÔÚ×ó²àÍ¼±êÀ¸, makeÉ¨»õ¾íagain",
+        "detail": "¶¨Ê±µØÉ¨Ãèbazaar, ÔÚÉÌÆ·µÍÓÚÉè¶¨¼Û¸ñÊ±·¢³öÍ¨Öª",
         "version": "v2.0.13"
     },
     {
-        "file": "æ‰¹é‡è°ƒè´¦.user.js",
-        "name": "æ‰¹é‡è°ƒè´¦",
+        "file": "ÅúÁ¿µ÷ÕË.user.js",
+        "name": "ÅúÁ¿µ÷ÕË",
         "author": "htys[1545351]",
-        "description": "æ‰¹é‡è°ƒæ•´å¸®æ´¾è´¦åŠ¡",
+        "description": "ÅúÁ¿µ÷Õû°ïÅÉÕËÎñ",
         "detail": "yyds!",
         "match": "torn.com/factions.php",
         "version": "v1.1.0"
@@ -79,8 +79,8 @@
         "file": "christmas_torn.js",
         "name": "Christmas Town Helper",
         "author": "Hardy[2131687]",
-        "description": "åœ£è¯å°é•‡è¾…åŠ©è„šæœ¬",
-        "detail": "åœ£è¯å°é•‡è¾…åŠ©è„šæœ¬",
+        "description": "Ê¥µ®Ğ¡Õò¸¨Öú½Å±¾",
+        "detail": "Ê¥µ®Ğ¡Õò¸¨Öú½Å±¾",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3"
     }
