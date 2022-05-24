@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.12
+// @version      2.0.13
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -198,7 +198,7 @@
                     function makeWrapper() {
                         let wrapperHTML = `
             <div id="shzs-wrapper" style="width: inherit;">
-                <div style="margin:10px; border:1px solid darkgray; font-size:14px; text-align:center;">
+                <div style="margin:10px; border:1px solid darkgray; font-size:14px; text-align:center; background-color: #e5e5e5;">
                     <div style="font-size:18px; font-weight: bold; margin:5px 0px;">扫货助手 - <button id="shzs-item-start" class="border-round shzs-pointer" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#8fbc8f; color:white;">开始</button></div>
                     <div style="background-color: darkgray;height: 1px;"></div>
                     <div style="margin:5px 0px;">
@@ -258,7 +258,6 @@
                 <th width="50px">监视</th>
                 <th>商品名</th>
                 <th>价格</th>
-                <th>价格</th>
                 <tr>`;
                 Object.keys(watchingItems).forEach((itemName) => {
                     const info = watchingItems[itemName];
@@ -266,7 +265,6 @@
                     <td><input type="checkbox" ${info.watched ?'checked="checked"' :''}" class="shzs-watchtb-checkbox" data-name="${itemName}"></td>
                     <td class="shzs-watchtb-name shzs-pointer" data-name="${itemName}">${itemName}</td>
                     <td class="shzs-watchtb-price shzs-pointer" data-price="${info.price}">${formatMoney2(info.price)}</td>
-                    <td class="shzs-watchtb-price shzs-pointer" data-price="${info.price}">${formatNumber2(info.price)}</td>
                     <tr>`
                 });
 
