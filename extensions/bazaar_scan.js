@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.0.13
+// @version      2.1.0
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -218,7 +218,7 @@
                         </datalist>
                     </div>
                     <div id="shzs-watching-wrapper" style="padding:0 0 5px 0">
-                        <table id="shzs-watching-tb" style="margin:auto; min-width:350px; background-color:white;">
+                        <table id="shzs-watching-tb" style="margin:auto; width:100%; max-width:350px; background-color:white; overflow: hidden;">
                         </table>
                         <div id="shzs-api-alert" style="margin: 5px;font-size: 11px;font-style: italic;"></div>
                     <div>
