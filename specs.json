@@ -51,7 +51,7 @@
         "version": "v1.0.0"
     },
     {
-        "file": "drivingPresets.js.js",
+        "file": "drivingPresets.js",
         "name": "赛车自定义比赛一键配置",
         "author": "stella[2671581]",
         "description": "一键配置赛车自定义比赛",
