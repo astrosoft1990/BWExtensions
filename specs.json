@@ -58,7 +58,7 @@
         "detail": "一键配置赛车自定义比赛",
         "match": "torn.com/loader.php\\?sid=racing",
         "version": "v1.0.0"
-    },
+    }, 
     {
         "file": "faction_simplified_log_view.js",
         "name": "帮派物品消息合并汉化",
