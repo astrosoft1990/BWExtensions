@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.1.0
+// @version      2.1.1
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -319,10 +319,14 @@
                     $(this).text('开始');
                     $('#shzs-icon-btn').removeClass('shzs-working');
                     document.title = "[扫货暂停]"
+                    window.onbeforeunload = null;
                 } else {
                     $(this).css('background-color', '#ff7373');
                     $(this).text('暂停');
                     $('#shzs-icon-btn').addClass('shzs-working');
+                    window.onbeforeunload = function(){
+                        return "正在扫货, 确定要离开吗QAQ";
+                    };
                 }
                 watching = !watching;
             });
