@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crime捷径
 // @namespace    TornExtensions
-// @version      1.0.2
+// @version      1.0.3
 // @description  快捷犯罪
 // @author       mirrorhye[2564936]
 // @match        https://www.torn.com/crimes.php*
@@ -14,8 +14,8 @@
     // avoid over loading in pda
     try {
         const __win = window.unsafeWindow || window;
-        if (__win.ChristmasTownHelper) return;
-        __win.ChristmasTownHelper = true;
+        if (__win.CrimeShortCut) return;
+        __win.CrimeShortCut = true;
         window = __win; // fix unsafeWindow
     } catch (err) {
         console.log(err);

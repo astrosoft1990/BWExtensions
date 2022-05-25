@@ -30,7 +30,7 @@
         "description": "更方便的快速犯罪",
         "detail": "day day 烧仓库",
         "match": "torn.com/crimes.php",
-        "version": "v1.0.2"
+        "version": "v1.0.3"
     },
     {
         "file": "bazaar_price_helper_v102.js",
@@ -48,6 +48,15 @@
         "description": "屏蔽进攻页面的人物形象",
         "detail": "屏蔽进攻页面的人物形象, 提高加载速度",
         "match": "torn.com/loader.php?sid=attack",
+        "version": "v1.0.0"
+    },
+    {
+        "file": "drivingPresets.js.js",
+        "name": "赛车自定义比赛一键配置",
+        "author": "stella[2671581]",
+        "description": "一键配置赛车自定义比赛",
+        "detail": "一键配置赛车自定义比赛",
+        "match": "torn.com/loader.php\\?sid=racing",
         "version": "v1.0.0"
     },
     {
@@ -80,7 +89,7 @@
         "file": "christmas_torn.js",
         "name": "Christmas Town Helper",
         "author": "Hardy[2131687]",
-        "description": "圣诞小镇辅助脚本",
+        "description": "圣诞小镇辅助脚本[有点bug 先别用]",
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3"
