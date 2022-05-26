@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.1.1
+// @version      2.1.2
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -313,7 +313,7 @@
             makeWatchingTable();
 
             // start / pause
-            $('#shzs-item-start').on('click', function(){
+            $('#shzs-item-start').bind('click', function(){
                 if (watching) {
                     $(this).css('background-color', '#8fbc8f');
                     $(this).text('开始');
@@ -332,7 +332,7 @@
             });
 
             // watch loop
-            $('#shzs-watch-loop').on('change', function(){
+            $('#shzs-watch-loop').bind('change', function(){
                 let prev = watchLoop;
                 let curr = $(this).val();
                 if (parseInt(curr) >= 0) {
@@ -346,7 +346,7 @@
             });
 
             // pt
-            $('#shzs-pt-input').on('change', function(){
+            $('#shzs-pt-input').bind('change', function(){
                 let prev = pointPrice;
                 let curr = formatMoney($(this).val());
                 if (parseInt(curr) >= 0) {
@@ -360,13 +360,15 @@
             });
 
             // 输入商品名事件
-            $("#shzs-item-name").on('input', function(){
+            $("#shzs-item-name").bind('input', function(){
                 const inputName = $(this).val();
                 const filtered = Object.keys(tornItems).filter((name) => name.toLowerCase() === inputName.toLowerCase());
+                mlog(`${inputName}`);
                 if (filtered.length > 0) {
                     const itemName = filtered[0];
                     fetchLowestItem(itemName).then((lowest) => {
                         if (inputName === $(this).val()) {
+                            mlog(`${JSON.stringify(lowest)}`);
                             $('#shzs-item-current-price').text(`${itemName}当前最低价: ${parseInt(lowest.cost)}`);
                             $('#shzs-item-current-bazaar').css('display', 'inline');
                             $('#shzs-item-current-bazaar').attr('href', `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
@@ -374,12 +376,12 @@
                     });
                 } else {
                     $('#shzs-item-current-price').text('');
-                    $('#shzs-item-current-price').css('display', 'none');
+                    $('#shzs-item-current-bazaar').css('display', 'none');
                 }
             });
 
             // 提交商品事件
-            $("#shzs-item-add").on('click', function(){
+            $("#shzs-item-add").bind('click', function(){
                 const inputName = $('#shzs-item-name').val();
                 const price = formatMoney($("#shzs-item-price").val());
                 if (price < 0) {
