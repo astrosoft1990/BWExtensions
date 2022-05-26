@@ -349,6 +349,7 @@
             $('#shzs-pt-input').bind('change', function(){
                 let prev = pointPrice;
                 let curr = formatMoney($(this).val());
+                alert(curr);
                 if (parseInt(curr) >= 0) {
                     ext_setValue("shzs-pt-price", curr);
                     pointPrice = ext_getValue("shzs-pt-price");
