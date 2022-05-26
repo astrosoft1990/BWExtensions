@@ -349,7 +349,6 @@
             $('#shzs-pt-input').bind('change', function(){
                 let prev = pointPrice;
                 let curr = formatMoney($(this).val());
-                alert(curr);
                 if (parseInt(curr) >= 0) {
                     ext_setValue("shzs-pt-price", curr);
                     pointPrice = ext_getValue("shzs-pt-price");
@@ -364,7 +363,6 @@
             $("#shzs-item-name").bind('input', function(){
                 const inputName = $(this).val();
                 const filtered = Object.keys(tornItems).filter((name) => name.toLowerCase() === inputName.toLowerCase());
-                mlog(`${inputName}`);
                 if (filtered.length > 0) {
                     const itemName = filtered[0];
                     fetchLowestItem(itemName).then((lowest) => {
