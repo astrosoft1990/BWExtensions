@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.1.2
+// @version      2.1.3
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -352,11 +352,13 @@
                 if (parseInt(curr) >= 0) {
                     ext_setValue("shzs-pt-price", curr);
                     pointPrice = ext_getValue("shzs-pt-price");
-                    $(this).val('');
                     $(this).attr('placeholder', `${`当前: ${pointPrice}, 0为不监视`}`);
                     mlog(`price ${prev} -> ${pointPrice}`);
                     makeApiAlert();
                 }
+            });
+            $('#shzs-pt-input').bind('change', function(){
+                $(this).val('');
             });
 
             // 输入商品名事件
