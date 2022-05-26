@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         赛车自定义比赛一键配置
 // @namespace    赛车自定义比赛一键配置
-// @version      V1.0.0
+// @version      V1.0.1
 // @description  Adding quick preset links for dedicated racers.
 // @author       Stella[2671581]
 // ==/UserScript==
@@ -64,7 +64,7 @@
         },
         {
             name: "Night Race(YePao)",
-            maxDrivers: 100,
+            maxDrivers: 2,
             trackName: "Docks",
             numberOfLaps: 100,
             waitTime: 1,
