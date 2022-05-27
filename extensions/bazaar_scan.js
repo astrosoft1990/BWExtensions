@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.1.3
+// @version      2.1.4
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -319,14 +319,10 @@
                     $(this).text('开始');
                     $('#shzs-icon-btn').removeClass('shzs-working');
                     document.title = "[扫货暂停]"
-                    window.onbeforeunload = null;
                 } else {
                     $(this).css('background-color', '#ff7373');
                     $(this).text('暂停');
                     $('#shzs-icon-btn').addClass('shzs-working');
-                    window.onbeforeunload = function(){
-                        return "正在扫货, 确定要离开吗QAQ";
-                    };
                 }
                 watching = !watching;
             });
@@ -423,6 +419,7 @@
     let dotCount = 0;
     setInterval(function(){
         let currentTimestamp = new Date().getTime() / 1000.0;
+
         if (watching) {
             dotCount = (dotCount + 1) % 4;
             let title = `[扫货暂停中]`;
@@ -432,7 +429,13 @@
             }
             for (let i = 0; i < dotCount; ++i) title += '.';
             document.title = title;
+            window.onbeforeunload = function(){
+                return "正在扫货, 确定要离开吗QAQ";
+            };
+        } else {
+            window.onbeforeunload = null;
         }
+
         if (watching && watchLoop > 0 && currentTimestamp - latestRefresh > watchLoop) {
             mlog(`refresh ${latestRefresh} -> ${currentTimestamp}`);
             ext_setValue('shzs-latest-refresh', currentTimestamp);
