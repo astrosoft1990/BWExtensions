@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BazaarScan
 // @namespace    TornExtensions
-// @version      2.1.4
+// @version      2.1.5
 // @description
 // @author       guoguo
 // @match        https://www.torn.com/*
@@ -213,12 +213,17 @@
                         <input id="shzs-item-name" list="shzs-dl-tornitems" placeholder="商品名称" class="border-round" style="height:25px; width:125px; margin: 0 5px; padding: 0 5px;">
                         <input id="shzs-item-price" placeholder="监视价格, 0则删除" class="border-round shzs-price-input" style="height:25px; width:125px; margin: 0 5px; padding: 0 5px;">
                         <button id="shzs-item-add" class="border-round shzs-pointer" style="height: 24px;padding: 2px 5px; margin:3px; background-color:#65a5d1; color:white;">添加</button>
-                        <div style="color: darkslategray;font-style: italic;font-size: 12px; margin:5px;"><span id="shzs-item-current-price"></span><a id="shzs-item-current-bazaar" style="display: none;" target="_blank"><svg style="margin: 0 5px;width: 15px;vertical-align: bottom;" viewBox="0 0 16 17" xmlns="http://www.w3.org/2000/svg"><path class="cls-3" d="M6.63,0,6,3.31v.74A1.34,1.34,0,0,1,3.33,4V3.31L5.33,0Zm-2,0L2.67,3.31v.74A1.33,1.33,0,0,1,1.33,5.33,1.32,1.32,0,0,1,0,4V3.31L3.25,0ZM16,4a1.32,1.32,0,0,1-1.33,1.29A1.37,1.37,0,0,1,13.33,4V3.27L11.41,0h1.34L16,3.31ZM9.33,3.27V4A1.33,1.33,0,0,1,6.67,4V3.27L7.37,0H8.63ZM10.67,0l2,3.33v.74a1.3,1.3,0,0,1-1.33,1.26A1.36,1.36,0,0,1,10,4V3.27L9.37,0ZM.67,6.67V16H7.33V14.67H2V8H14v8h1.33V6.67Zm12,2.66h-4V16h4Z"></path></svg></a></div>
+                        <div id="shzs-item-current-price-wrapper" style="display: none; color: darkslategray;font-style: italic;font-size: 12px; margin:5px;"><span id="shzs-item-current-price-text" class="shzs-pointer shzs-item-current-price"></span>
+                            <button id="shzs-item-current-price-5" class="border-round shzs-pointer shzs-item-current-price" style="padding: 0 2px; background-color:#8fbc8f; color:white;">-5%</button>
+                            <button id="shzs-item-current-price-10" class="border-round shzs-pointer shzs-item-current-price" style="padding: 0 2px; background-color:#8fbc8f; color:white;">-10%</button>
+                            <button id="shzs-item-current-price-20" class="border-round shzs-pointer shzs-item-current-price" style="padding: 0 2px; background-color:#8fbc8f; color:white;">-20%</button>
+                            <a id="shzs-item-current-bazaar" style="display: inline;" target="_blank"><svg style="margin: 0 5px;width: 15px;vertical-align: bottom;" viewBox="0 0 16 17" xmlns="http://www.w3.org/2000/svg"><path class="cls-3" d="M6.63,0,6,3.31v.74A1.34,1.34,0,0,1,3.33,4V3.31L5.33,0Zm-2,0L2.67,3.31v.74A1.33,1.33,0,0,1,1.33,5.33,1.32,1.32,0,0,1,0,4V3.31L3.25,0ZM16,4a1.32,1.32,0,0,1-1.33,1.29A1.37,1.37,0,0,1,13.33,4V3.27L11.41,0h1.34L16,3.31ZM9.33,3.27V4A1.33,1.33,0,0,1,6.67,4V3.27L7.37,0H8.63ZM10.67,0l2,3.33v.74a1.3,1.3,0,0,1-1.33,1.26A1.36,1.36,0,0,1,10,4V3.27L9.37,0ZM.67,6.67V16H7.33V14.67H2V8H14v8h1.33V6.67Zm12,2.66h-4V16h4Z"></path></svg></a>
+                        </div>
                         <datalist id="shzs-dl-tornitems">
                         </datalist>
                     </div>
                     <div id="shzs-watching-wrapper" style="padding:0 0 5px 0">
-                        <table id="shzs-watching-tb" style="margin:auto; width:100%; max-width:350px; background-color:white; overflow: hidden;">
+                        <table id="shzs-watching-tb" style="margin:auto; width:100%; max-width:350px; background-color:white; overflow: hidden; word-break:break-all;">
                         </table>
                         <div id="shzs-api-alert" style="margin: 5px;font-size: 11px;font-style: italic;"></div>
                     <div>
@@ -293,9 +298,11 @@
 
                 // price事件
                 $('.shzs-watchtb-price').bind('click', function(){
-                    const itemPrice = $(this).attr('data-price');
-                    $('#shzs-item-price').val(itemPrice);
-                    $('#shzs-item-price').trigger('input');
+                    const itemPrice = parseInt($(this).attr('data-price'));
+                    if (itemPrice > 0) {
+                        $('#shzs-item-price').val(itemPrice);
+                        $('#shzs-item-price').trigger('input');
+                    }
                 });
             }
 
@@ -357,6 +364,13 @@
                 $(this).val('');
             });
 
+            // 点击当前低价时将价格填入
+            $('.shzs-item-current-price').bind('click', function(){
+                const itemPrice = parseInt($(this).attr('data-price'));
+                $('#shzs-item-price').val(itemPrice);
+                $('#shzs-item-price').trigger('input');
+            });
+
             // 输入商品名事件
             $("#shzs-item-name").bind('input', function(){
                 const inputName = $(this).val();
@@ -365,15 +379,17 @@
                     const itemName = filtered[0];
                     fetchLowestItem(itemName).then((lowest) => {
                         if (inputName === $(this).val()) {
-                            mlog(`${JSON.stringify(lowest)}`);
-                            $('#shzs-item-current-price').text(`${itemName}当前最低价: ${parseInt(lowest.cost)}`);
-                            $('#shzs-item-current-bazaar').css('display', 'inline');
+                            $('#shzs-item-current-price-wrapper').css('display', 'block');
+                            $('#shzs-item-current-price-text').text(`${itemName}当前最低价: ${parseInt(lowest.cost)}`);
                             $('#shzs-item-current-bazaar').attr('href', `https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname=${itemName}`);
+                            $('#shzs-item-current-price-text').attr('data-price', `${parseInt(lowest.cost)}`);
+                            $('#shzs-item-current-price-5').attr('data-price', `${parseInt(parseInt(lowest.cost) * 0.95)}`);
+                            $('#shzs-item-current-price-10').attr('data-price', `${parseInt(parseInt(lowest.cost) * 0.9)}`);
+                            $('#shzs-item-current-price-20').attr('data-price', `${parseInt(parseInt(lowest.cost) * 0.8)}`);
                         }
                     });
                 } else {
-                    $('#shzs-item-current-price').text('');
-                    $('#shzs-item-current-bazaar').css('display', 'none');
+                    $('#shzs-item-current-price-wrapper').css('display', 'none');
                 }
             });
 
