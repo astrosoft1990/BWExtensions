@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YataOCEnhancer
 // @namespace    SMTH
-// @version      0.0.1
+// @version      0.0.2
 // @description  YATA-OC增强
 // @author       mirrorhye[2564936]
 // @match        https://www.torn.com/*

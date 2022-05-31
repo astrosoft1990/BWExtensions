@@ -83,7 +83,7 @@
         "description": "oc界面nnb显示增强, 请配合YATA-OC脚本使用",
         "detail": "快给我登录yata啊啊啊",
         "match": "torn.com/factions.php\\?step=your",
-        "version": "v0.0.1"
+        "version": "v0.0.2"
     },
     {
         "file": "批量调账.user.js",
