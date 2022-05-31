@@ -10,7 +10,7 @@ function ext_getValue(key, default_value) {
         }
         return val;
     } catch (err) {
-        console.log(err);
+        console.trace(err);
         return val;
     }
 }
