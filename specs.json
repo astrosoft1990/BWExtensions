@@ -82,7 +82,7 @@
         "author": "mirrorhye[2564936]",
         "description": "oc界面nnb显示增强, 请配合YATA-OC脚本使用",
         "detail": "快给我登录yata啊啊啊",
-        "match": "factions.php?step=your#/tab=crimes",
+        "match": "torn.com/factions.php\\?step=your",
         "version": "v0.0.1"
     },
     {
