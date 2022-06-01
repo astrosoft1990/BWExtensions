@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YataOCEnhancer
 // @namespace    SMTH
-// @version      0.0.2
+// @version      1.0.0
 // @description  YATA-OC增强
 // @author       mirrorhye[2564936]
 // @match        https://www.torn.com/*
@@ -51,7 +51,53 @@
         membersNNB = ext_getValue('yoe-membersNNB', {});
     }
 
+    function stringifyRecord(record) {
+        if (record.min == record.max) {
+            return `${record.min}`;
+        } else {
+            return `${record.min == -100 ?'?' :record.min} ~ ${record.max == 100 ?'?' :record.max}`;
+        }
+    }
+
     setInterval(() => {
+        if (window.location.href.indexOf('tab=crimes') < 0) {
+            return;
+        }
+
+        // 导入导出
+        if ($("#yoe-export").length <= 0) {
+            $('#top-page-links-list').append(`<a role="button" id="yoe-export" style="cursor: pointer" class="events t-clear h c-pointer  m-icon line-h24 right last"><span class="icon-wrap svg-icon-wrap"><span class="link-icon-svg events "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 17"><path class="cls-3" d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM6.47,2.87H9.53l-.77,7.18H7.24ZM8,13.55A1.15,1.15,0,1,1,9.15,12.4,1.14,1.14,0,0,1,8,13.55Z"></path></svg></span></span><span>导出NNB</span></a>`)
+            $('#yoe-export').bind('click', async function(){
+                const text = JSON.stringify(membersNNB, null, 2);
+                await navigator.clipboard.writeText(text);
+                console.log(text);
+                alert(`已导出到粘贴板!\n${text}`);
+            });
+        }
+
+        if ($("#yoe-import").length <= 0) {
+            $('#top-page-links-list').append(`<a role="button" id="yoe-import" style="cursor: pointer" class="events t-clear h c-pointer  m-icon line-h24 right last"><span class="icon-wrap svg-icon-wrap"><span class="link-icon-svg events "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 17"><path class="cls-3" d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM6.47,2.87H9.53l-.77,7.18H7.24ZM8,13.55A1.15,1.15,0,1,1,9.15,12.4,1.14,1.14,0,0,1,8,13.55Z"></path></svg></span></span><span>导入NNB</span></a>`)
+            $('#yoe-import').bind('click', function(){
+                const text = prompt('请输入需要导入的数据');
+                try {
+                    let dict = JSON.parse(text);
+                    let display = '';
+                    Object.keys(dict).forEach((key) => {
+                        const info = dict[key];
+                        display += `${key}: ${stringifyRecord(info)}\n`;
+                    });
+                    const trust = confirm(`确定要导入以下数据吗:\n${display}`);
+                    if (trust) {
+                        membersNNB = dict;
+                        syncNNBs()
+                    }
+                } catch (err) {
+                    console.trace(err);
+                    alert(err)
+                }
+            });
+        }
+
         function selectUserId(e) {
             const userURL = $(e).find('.member a').attr('href');
             const userId = userURL.substr(userURL.indexOf('XID=')+4);
@@ -126,7 +172,7 @@
         $('.yata-nnb').not(':contains("NNB")').parent().each(function(idx) {
             const userId = selectUserId(this);
             const recordNNB = membersNNB[userId];
-            $(this).find('.yata-rank').text(`${(recordNNB.min == -100) ?'?' :recordNNB.min} ~ ${(recordNNB.max == 100) ?'?' :recordNNB.max}`);
+            $(this).find('.yata-rank').text(`${stringifyRecord(recordNNB)}`);
         });
     }, 1000);
 })();
