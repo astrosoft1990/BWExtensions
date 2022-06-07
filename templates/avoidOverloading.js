@@ -5,5 +5,5 @@ try {
     __win.#name# = true;
     window = __win; // fix unsafeWindow
 } catch (err) {
-    console.log(err);
+    console.trace(err);
 }
