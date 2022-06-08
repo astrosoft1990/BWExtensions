@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bazaar Price Helper
 // @namespace    SMTH
-// @version      1.0.4
+// @version      1.0.5
 // @description  自动填充bazaar上架价格
 // @author       Mirrorhye[2564936]
 // @match        https://www.torn.com/bazaar.php*
@@ -63,6 +63,23 @@
     }
     // mir_log(API_KEY);
 
+    const bingwa_color_pool = {
+        'gray': '#adadad',
+        'red': '#ff7373',
+        'green': '#8fbc8f',
+        'blue': '#65a5d1',
+        'purple': '#8d6dd7',
+        'yellow': '#f39826',
+        'yellowgreen': '#83a000',
+        'pink': '#e467b3',
+        'salmon': '#F9CDAD',
+        'orange': '#FFDEAD'
+    };
+
+    function formatMoney2(num) {
+        return num.toString().replace(/\d{1,3}(?=(\d{3})+$)/g, function(s) { return s + "," }).replace(/^[^\$]\S+/, function(s) { return s });
+    }
+
     function prices_choose_strategy(item_prices) {
         try {
             let position = Math.max(Math.min(item_prices.length, parseInt(mir_get(positionKey, 0))), 0);
@@ -83,7 +100,7 @@
         $(item).attr('bph-marked', price);
     }
 
-    function isMarked(item) {
+    function getMarked(item) {
         return $(item).attr('bph-marked');
     }
 
@@ -93,10 +110,7 @@
 
     function markAllNeedUpdate() {
         $('[bph-marked]').each(function(){
-            const markedPrice = $(this).attr('bph-marked');
-            if (markedPrice == $(this).find('input')[1].value) {
-                $(this).attr('bph-needUpdate', 'true');
-            }
+            $(this).attr('bph-needUpdate', 'true');
         });
     }
     function unmarkNeedUpdate(item) {
@@ -194,17 +208,62 @@
 
     }
 
+    $(body).prepend(`
+        <style>
+            .bph-changed {
+                background-color: ${bingwa_color_pool.green}
+            }
+            .bph-pricepos {
+                float: right; 
+                padding: 0; 
+                margin: 0 1px;
+            }
+            .bph-pricetext {
+                display:inline-block;
+                cursor:pointer; 
+                padding: 0 5px; 
+                line-height:20px;
+                background-color:rgba(0, 0, 0, 0.7); 
+                color: #DED7BE; 
+                text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
+            }
+        </style>
+    `);
+
     function fill_prices_at_additem(page_items) {
+        function insertBtn(item, idx, price, input) {
+            const clz = `bph-pricepos-${idx}`
+            $(item).find(`.${clz}`).remove();
+            $(item).find('.info-wrap').append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round">${formatMoney2(price)}</span></span>`);
+            $(item).find(`.${clz}`).bind('click', function(){
+                input.value = price;
+                input.dispatchEvent(new Event("input"));
+            });
+        }
+
         page_items.each(async function(){
             let item_id = (/images\/items\/([0-9]+)\/.*/).exec($(this).find("img[id^='item']").attr('src'))[1];
-            let item_input = $(this).find("input")[1]; // 价格input
-            if (isMarked(this) && !isNeedUpdate(this) && (item_input.value !== '' && item_input.value !== 'API请求出错')) {
+            let item_input = $(this).find('[class^=price] input')[0]; // 价格input
+            
+            let change = item_input.value !== '' && item_input.value !== 'API请求出错' && item_input.value !== getMarked(this);
+            if (change) {
+                $(this).find(".price").addClass('bph-changed');
+            } else {
+                $(this).find(".price").removeClass('bph-changed');
+            }
+
+            let needUpdate = (!getMarked(this) || isNeedUpdate(this)) && !change;
+            if (!needUpdate) {
                 return;
             }
             try {
                 let item_prices = await get_item_prices(item_id);
                 item_input.value = prices_choose_strategy(item_prices);
                 item_input.dispatchEvent(new Event("input"));
+                // 插入三个按钮
+                for (let i = Math.min(2, item_prices.length - 1); i >=0; i--) {
+                    insertBtn(this, i, item_prices[i], item_input);
+                }
                 mark(this, item_input.value);
                 unmarkNeedUpdate(this);
             } catch(err) {
@@ -215,26 +274,50 @@
     }
 
     function fill_prices_at_manage(page_items) {
-        function fill_item_price(item_input, item_price, item_detail1, item_detail2, old_price) {
-            mir_log(`price: ${item_price}`);
+        function fill_item_price(item_input, item_prices, item_detail1, item_detail2, old_price) {
+            function insertBtn(idx, price) {
+                const clz = `bph-pricepos-${idx}`
+                $(item_detail1).find(`.${clz}`).remove();
+                $(item_detail1).append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round">${formatMoney2(price)}</span></span>`);
+                $(item_detail1).find(`.${clz}`).bind('click', function(){
+                    let color = "green";
+                    if (price - old_price > 0) {
+                        color = "red";
+                    } else if (price - old_price == 0) {
+                        color = "white";
+                    }
+                    item_detail2.style.color = color
+                    // item_detail2.innerText = `${price - old_price}(${parseFloat((price - old_price)/old_price*100).toFixed(2)}%)`;
+                    item_detail2.innerText = `${price - old_price}`;
 
-            item_detail1.innerText = `${old_price} => ${item_price}`;
+                    item_input.value = price + '-';
+                });
+            }
+            // 插入三个按钮
+            for (let i = Math.min(2, item_prices.length - 1); i >=0; i--) {
+                insertBtn(i, item_prices[i]);
+            }
+            const item_price = prices_choose_strategy(item_prices);
+            mir_log(`price: ${item_price}`);
             let color = "green";
             if (item_price - old_price > 0) {
                 color = "red";
             } else if (item_price - old_price == 0) {
                 color = "white";
             }
-            item_detail2.style.color = color
-            item_detail2.innerText = `${item_price - old_price}(${((item_price - old_price)/old_price).toFixed(2)*100}%)`;
+            item_detail2.style.color = color;
+            // item_detail2.innerText = `${item_price - old_price}(${parseFloat((item_price - old_price)/old_price*100).toFixed(2)}%)`;
+            item_detail2.innerText = `${item_price - old_price}`;
 
             item_input.value = item_price + '-';
         }
         
         page_items.each(async function() {
             let item_id = (/images\/items\/([0-9]+)\/.*/).exec($(this).find("img").attr('src'))[1];
-            let item_input = $(this).find('input')[1]; // 价格input
-            if (isMarked(this) && !isNeedUpdate(this) && (item_input.value !== '' && item_input.value !== 'API请求出错')) {
+            let item_input = $(this).find('[class^=price] input')[0]; // 价格input
+            
+            let needUpdate = !getMarked(this) || (isNeedUpdate(this) && (item_input.value === '' || item_input.value === 'API请求出错' || item_input.value === getMarked(this)));
+            if (!needUpdate) {
                 return;
             }
             if (!$(this).attr('bph-curr')) {
@@ -252,10 +335,10 @@
             let item_detail2 = $(this).find("div[class^=rrp]")[0];
             try {
                 let item_prices = await get_item_prices(item_id);
-                fill_item_price(item_input, prices_choose_strategy(item_prices), item_detail1, item_detail2, old_price);
+                fill_item_price(item_input, item_prices, item_detail1, item_detail2, old_price);
                 mark(this, item_input.value);
                 unmarkNeedUpdate(this);
-            } catch {
+            } catch (err) {
                 console.trace(err);
                 item_input.value = "API请求出错";
             }
@@ -268,7 +351,7 @@
             return request_cache[item_id];
         } else {
             // 请求API
-            let API = `https://api.torn.com/market/${item_id}?selections=&key=${API_KEY}`;
+            const API = `https://api.torn.com/market/${item_id}?selections=&key=${API_KEY}`;
             mir_log(`请求: ${API}, item id: ${item_id}`);
             request_cache[item_id] = fetch(API).then((res) => {
                 return res.json();
