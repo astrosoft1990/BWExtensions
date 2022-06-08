@@ -33,17 +33,8 @@
         "version": "v1.0.3"
     },
     {
-        "file": "bazaar_price_helper_v102.js",
-        "name": "bazaar助手",
-        "author": "mirrorhye[2564936]",
-        "description": "自动帮商品填上合适的市场价",
-        "detail": "在bazaar页面上方可以选择价格基数, 在addItem/manageItem页面会自动填上价格",
-        "match": "torn.com/bazaar",
-        "version": "v1.0.3"
-    },
-    {
         "file": "bazaar_price_helper.js",
-        "name": "bazaar助手测试版",
+        "name": "bazaar助手",
         "author": "mirrorhye[2564936]",
         "description": "如有bug请及时联系mirrorhye[2564936]",
         "detail": "如有bug请及时联系mirrorhye[2564936]",
