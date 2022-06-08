@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bazaar Price Helper
 // @namespace    SMTH
-// @version      1.0.5
+// @version      1.0.7
 // @description  自动填充bazaar上架价格
 // @author       Mirrorhye[2564936]
 // @match        https://www.torn.com/bazaar.php*
@@ -80,15 +80,22 @@
         return num.toString().replace(/\d{1,3}(?=(\d{3})+$)/g, function(s) { return s + "," }).replace(/^[^\$]\S+/, function(s) { return s });
     }
 
-    function prices_choose_strategy(item_prices) {
+    const marketValuePos = -10086;
+    function prices_choose_strategy(itemPrices, item_value) {
         try {
-            let position = Math.max(Math.min(item_prices.length, parseInt(mir_get(positionKey, 0))), 0);
+            let position = parseInt(mir_get(positionKey, 0));
+            let price = 0;
+            if (position == marketValuePos) {
+                price = item_value;
+            } else {
+                price = itemPrices[Math.max(Math.min(itemPrices.length, position), 0)]
+            }
             let premium = parseFloat(mir_get(premiumKey, 0.0));
             let base = mir_get(baseKey, '%');
             if (base === '%') {
-                return Math.ceil(item_prices[position] * (1 + (premium / 100.0)));
+                return Math.ceil(price * (1 + (premium / 100.0)));
             } else {
-                return Math.ceil(item_prices[position] + premium);
+                return Math.ceil(price + premium);
             }
         } catch(err) {
             console.trace(err);
@@ -123,7 +130,6 @@
         // 价格位置变更
         function onPositionChange() {
             let position = parseInt($("#bph_position_select").attr('value'));
-            position = Math.max(Math.min(49, position), 0);
             $("#bph_position_select").attr('value', position);
             let prev_position = mir_get(positionKey);
             mir_set(positionKey, position);
@@ -156,13 +162,18 @@
             mir_log(`页面更新`);
             if ($("div[class^=appHeaderWrapper]").length > 0 && $("div[class=bph_header]").length == 0) {
                 function positionSelect() {
-                    let position = Math.max(Math.min(9, parseInt(mir_get(positionKey, 0))), 0);
+                    let position = mir_get(positionKey, 0);
                     let html = `<select id="bph_position_select">`;
+                    if (position == marketValuePos) {
+                        html += `<option value="${marketValuePos}" selected="selected">market value</option>`;
+                    } else {
+                        html += `<option value="${marketValuePos}">market value</option>`;
+                    }
                     for (let i = 0; i < 10; i++) {
                         if (i == position) {
-                            html += `<option value="${i}" selected="selected">${i}</option>`;
+                            html += `<option value="${i}" selected="selected">市场第${i+1}低</option>`;
                         } else {
-                            html += `<option value="${i}">${i}</option>`;
+                            html += `<option value="${i}">市场第${i+1}低</option>`;
                         }
                     }
                     html += `</select>`;
@@ -179,7 +190,7 @@
                 }
 
                 let premium = mir_get(premiumKey, 0.0);
-                $("div[class^=appHeaderWrapper]").append(`<div class="bph_header" style="padding:10px 0 0 0"><div style="background-color:white;padding:10px;border:1px solid black;">以市场第${positionSelect()}低的价位为基准&nbsp;&nbsp;溢价+
+                $("div[class^=appHeaderWrapper]").append(`<div class="bph_header" style="padding:10px 0 0 0"><div style="background-color:white;padding:10px;border:1px solid black;">以${positionSelect()}的价位为基准&nbsp;&nbsp;溢价+
                 <input id="bph_preInput" value="${premium}" style="background-color:lightgray;width:30px;padding: 0 5px 0 5px;font-weight:bold;color:#333;text-align: center;">${baseSelect()}
                 </div><hr class="page-head-delimiter m-top10 m-bottom10"></div>`);
                 $("#bph_preInput").change(onPremiumChange);
@@ -227,6 +238,9 @@
                 color: #DED7BE; 
                 text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
             }
+            .bph-pricepos-wrapper {
+                float:right;
+            }
         </style>
     `);
 
@@ -234,8 +248,11 @@
         function insertBtn(item, idx, price, input) {
             const clz = `bph-pricepos-${idx}`
             $(item).find(`.${clz}`).remove();
-            const style = `"background-color:rgba(0, 0, 0, ${0.6 + idx*0.15})"`;
-            $(item).find('.info-wrap').append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round" style=${style}>${formatMoney2(price)}</span></span>`);
+            if ($(item).find('.bph-pricepos-wrapper').length <= 0) {
+                $(item).find('.info-wrap').prepend('<div class="bph-pricepos-wrapper"></div>');
+            }
+            const style = `"background-color:rgba(0, 0, 0, ${1 - idx*0.1})"`;
+            $(item).find('.bph-pricepos-wrapper').append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round" style=${style}>${formatMoney2(price)}</span></span>`);
             $(item).find(`.${clz}`).bind('click', function(){
                 input.value = price;
                 input.dispatchEvent(new Event("input"));
@@ -244,9 +261,9 @@
 
         page_items.each(async function(){
             let item_id = (/images\/items\/([0-9]+)\/.*/).exec($(this).find("img[id^='item']").attr('src'))[1];
-            let item_input = $(this).find('[class^=price] input')[0]; // 价格input
+            let itemInput = $(this).find('[class^=price] input')[0]; // 价格input
             
-            let change = item_input.value !== '' && item_input.value !== 'API请求出错' && item_input.value !== getMarked(this);
+            let change = itemInput.value !== '' && itemInput.value !== 'API请求出错' && itemInput.value !== getMarked(this);
             if (change) {
                 $(this).find(".price").addClass('bph-changed');
             } else {
@@ -258,28 +275,29 @@
                 return;
             }
             try {
-                let item_prices = await get_item_prices(item_id);
-                item_input.value = prices_choose_strategy(item_prices);
-                item_input.dispatchEvent(new Event("input"));
+                let itemPrices = await getItemPrices(item_id);
+                let marketValue = await getMarketValue(item_id);
+                itemInput.value = prices_choose_strategy(itemPrices, marketValue);
+                itemInput.dispatchEvent(new Event("input"));
                 // 插入三个按钮
-                for (let i = Math.min(2, item_prices.length - 1); i >=0; i--) {
-                    insertBtn(this, i, item_prices[i], item_input);
+                for (let i = Math.min(2, itemPrices.length - 1); i >=0; i--) {
+                    insertBtn(this, i, itemPrices[i], itemInput);
                 }
-                mark(this, item_input.value);
+                mark(this, itemInput.value);
                 unmarkNeedUpdate(this);
             } catch(err) {
                 console.trace(err);
-                item_input.value = 'API请求出错';
+                itemInput.value = 'API请求出错';
             }
         });
     }
 
     function fill_prices_at_manage(page_items) {
-        function fill_item_price(item_input, item_prices, item_detail1, item_detail2, old_price) {
+        function fill_item_price(itemInput, itemPrices, marketValue, item_detail1, item_detail2, old_price) {
             function insertBtn(idx, price) {
                 const clz = `bph-pricepos-${idx}`
                 $(item_detail1).find(`.${clz}`).remove();
-                const style = `"background-color:rgba(0, 0, 0, ${0.6 + idx*0.15})"`;
+                const style = `"background-color:rgba(0, 0, 0, ${1 - idx*0.1})"`;
                 $(item_detail1).append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round" style=${style}>${formatMoney2(price)}</span></span>`);
                 $(item_detail1).find(`.${clz}`).bind('click', function(){
                     let color = "green";
@@ -292,14 +310,14 @@
                     // item_detail2.innerText = `${price - old_price}(${parseFloat((price - old_price)/old_price*100).toFixed(2)}%)`;
                     item_detail2.innerText = `${price - old_price}`;
 
-                    item_input.value = price + '-';
+                    itemInput.value = price + '-';
                 });
             }
             // 插入三个按钮
-            for (let i = Math.min(2, item_prices.length - 1); i >=0; i--) {
-                insertBtn(i, item_prices[i]);
+            for (let i = Math.min(2, itemPrices.length - 1); i >=0; i--) {
+                insertBtn(i, itemPrices[i]);
             }
-            const item_price = prices_choose_strategy(item_prices);
+            const item_price = prices_choose_strategy(itemPrices, marketValue);
             mir_log(`price: ${item_price}`);
             let color = "green";
             if (item_price - old_price > 0) {
@@ -311,21 +329,21 @@
             // item_detail2.innerText = `${item_price - old_price}(${parseFloat((item_price - old_price)/old_price*100).toFixed(2)}%)`;
             item_detail2.innerText = `${item_price - old_price}`;
 
-            item_input.value = item_price + '-';
+            itemInput.value = item_price + '-';
         }
         
         page_items.each(async function() {
             let item_id = (/images\/items\/([0-9]+)\/.*/).exec($(this).find("img").attr('src'))[1];
-            let item_input = $(this).find('[class^=price] input')[0]; // 价格input
+            let itemInput = $(this).find('[class^=price] input')[0]; // 价格input
             
-            let needUpdate = !getMarked(this) || (isNeedUpdate(this) && (item_input.value === '' || item_input.value === 'API请求出错' || item_input.value === getMarked(this)));
+            let needUpdate = !getMarked(this) || (isNeedUpdate(this) && (itemInput.value === '' || itemInput.value === 'API请求出错' || itemInput.value === getMarked(this)));
             if (!needUpdate) {
                 return;
             }
             if (!$(this).attr('bph-curr')) {
                 let old_price = 0
-                for (let j in item_input.value) {
-                    let n = item_input.value[j];
+                for (let j in itemInput.value) {
+                    let n = itemInput.value[j];
                     if (n >= '0' && n <= '9') {
                         old_price = old_price*10 + (n - '0');
                     }
@@ -336,19 +354,20 @@
             let item_detail1 = $(this).find("div[class^=bonuses]")[0];
             let item_detail2 = $(this).find("div[class^=rrp]")[0];
             try {
-                let item_prices = await get_item_prices(item_id);
-                fill_item_price(item_input, item_prices, item_detail1, item_detail2, old_price);
-                mark(this, item_input.value);
+                let itemPrices = await getItemPrices(item_id);
+                let marketValue = await getMarketValue(item_id);
+                fill_item_price(itemInput, itemPrices, marketValue, item_detail1, item_detail2, old_price);
+                mark(this, itemInput.value);
                 unmarkNeedUpdate(this);
             } catch (err) {
                 console.trace(err);
-                item_input.value = "API请求出错";
+                itemInput.value = "API请求出错";
             }
         });
     }
 
     let request_cache = {};
-    async function get_item_prices(item_id) {
+    async function getItemPrices(item_id) {
         if (request_cache[item_id]) {
             return request_cache[item_id];
         } else {
@@ -358,21 +377,92 @@
             request_cache[item_id] = fetch(API).then((res) => {
                 return res.json();
             }).then((json_data) => {
-                let item_prices = [];
+                let itemPrices = [];
                 json_data.bazaar.forEach(e => {
                     if (typeof(e.cost) == "undefined") {
-                        item_prices.push(0)
+                        itemPrices.push(0)
                     } else {
-                        item_prices.push(e.cost)
+                        itemPrices.push(e.cost)
                     }
                 });
-                item_prices = item_prices.sort((x, y) => x - y);
-                return item_prices;
+                itemPrices = itemPrices.sort((x, y) => x - y);
+                return itemPrices;
             }).catch((err) => {
                 request_cache[item_id] = null;
                 throw err;
             });
             return request_cache[item_id];
         };
+    }
+
+    const delay = (t) => {
+        return new Promise((r) => {
+            setTimeout(()=>{
+            r();
+            }, t*1000)
+        })
+    }
+
+    function fetchAPI(API, retry=5) {
+        return new Promise(async (resolve, reject) => {
+            let count = 0;
+            while (count < retry) {
+                try {
+                    let api = API;
+                    let r = await (await fetch(api)).json();
+                    resolve(r);
+                    return;
+                } catch {}
+                await delay(1);
+                count++;
+            }
+            reject(new Error());
+        });
+    }
+
+    async function getItemPrices(item_id) {
+        if (request_cache[item_id]) {
+            return request_cache[item_id];
+        } else {
+            // 请求API
+            const API = `https://api.torn.com/market/${item_id}?selections=&key=${API_KEY}`;
+            mir_log(`请求: ${API}, item id: ${item_id}`);
+            request_cache[item_id] = fetchAPI(API).then((json_data) => {
+                let itemPrices = [];
+                json_data.bazaar.forEach(e => {
+                    if (typeof(e.cost) == "undefined") {
+                        itemPrices.push(0)
+                    } else {
+                        itemPrices.push(e.cost)
+                    }
+                });
+                itemPrices = itemPrices.sort((x, y) => x - y);
+                return itemPrices;
+            }).catch((err) => {
+                request_cache[item_id] = null;
+                throw err;
+            });
+            return request_cache[item_id];
+        };
+    }
+
+    let marketValues = new Promise(async (resolve) => {
+        const API = `https://api.torn.com/torn/?selections=items&key=${API_KEY}`;
+        let r = {};
+        while (1) {
+            try {
+                while (!r.items) {
+                    r = await fetchAPI(API);
+                }
+                break;
+            } catch {}
+            await delay(1);
+        }
+        resolve(r.items);
+    });    
+    
+    async function getMarketValue(item_id) {
+        let values = await marketValues;
+        return values[item_id].market_value;
     }
 })();
