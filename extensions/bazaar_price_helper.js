@@ -234,7 +234,8 @@
         function insertBtn(item, idx, price, input) {
             const clz = `bph-pricepos-${idx}`
             $(item).find(`.${clz}`).remove();
-            $(item).find('.info-wrap').append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round">${formatMoney2(price)}</span></span>`);
+            const style = `"background-color:rgba(0, 0, 0, ${0.6 + idx*0.15})"`;
+            $(item).find('.info-wrap').append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round" style=${style}>${formatMoney2(price)}</span></span>`);
             $(item).find(`.${clz}`).bind('click', function(){
                 input.value = price;
                 input.dispatchEvent(new Event("input"));
@@ -278,7 +279,8 @@
             function insertBtn(idx, price) {
                 const clz = `bph-pricepos-${idx}`
                 $(item_detail1).find(`.${clz}`).remove();
-                $(item_detail1).append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round">${formatMoney2(price)}</span></span>`);
+                const style = `"background-color:rgba(0, 0, 0, ${0.6 + idx*0.15})"`;
+                $(item_detail1).append(`<span class="bph-pricepos ${clz}"><span class="bph-pricetext border-round" style=${style}>${formatMoney2(price)}</span></span>`);
                 $(item_detail1).find(`.${clz}`).bind('click', function(){
                     let color = "green";
                     if (price - old_price > 0) {
