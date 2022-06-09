@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bazaar Price Helper
 // @namespace    SMTH
-// @version      1.0.7
+// @version      1.0.8
 // @description  自动填充bazaar上架价格
 // @author       Mirrorhye[2564936]
 // @match        https://www.torn.com/bazaar.php*
@@ -76,6 +76,9 @@
         'orange': '#FFDEAD'
     };
 
+    function formatMoney(num) {
+        return num.replace(/,/g, '');
+    }
     function formatMoney2(num) {
         return num.toString().replace(/\d{1,3}(?=(\d{3})+$)/g, function(s) { return s + "," }).replace(/^[^\$]\S+/, function(s) { return s });
     }
@@ -319,16 +322,6 @@
             }
             const item_price = prices_choose_strategy(itemPrices, marketValue);
             mir_log(`price: ${item_price}`);
-            let color = "green";
-            if (item_price - old_price > 0) {
-                color = "red";
-            } else if (item_price - old_price == 0) {
-                color = "white";
-            }
-            item_detail2.style.color = color;
-            // item_detail2.innerText = `${item_price - old_price}(${parseFloat((item_price - old_price)/old_price*100).toFixed(2)}%)`;
-            item_detail2.innerText = `${item_price - old_price}`;
-
             itemInput.value = item_price + '-';
         }
         
@@ -336,23 +329,34 @@
             let item_id = (/images\/items\/([0-9]+)\/.*/).exec($(this).find("img").attr('src'))[1];
             let itemInput = $(this).find('[class^=price] input')[0]; // 价格input
             
+            let item_detail2 = $(this).find("div[class^=rrp]")[0];
+            (() => {
+                if (!$(this).attr('bph-curr')) {
+                    return;
+                }
+                let oldPrice = parseInt(formatMoney($(this).attr('bph-curr')));
+                let currentPrice = parseInt(formatMoney(itemInput.value));
+                console.log(oldPrice, currentPrice);
+                let color = "green";
+                if (currentPrice - oldPrice > 0) {
+                    color = "red";
+                } else if (currentPrice - oldPrice == 0) {
+                    color = "white";
+                }
+                item_detail2.style.color = color;
+                item_detail2.innerText = `${currentPrice - oldPrice}`;
+            })();
+
             let needUpdate = !getMarked(this) || (isNeedUpdate(this) && (itemInput.value === '' || itemInput.value === 'API请求出错' || itemInput.value === getMarked(this)));
             if (!needUpdate) {
                 return;
             }
             if (!$(this).attr('bph-curr')) {
-                let old_price = 0
-                for (let j in itemInput.value) {
-                    let n = itemInput.value[j];
-                    if (n >= '0' && n <= '9') {
-                        old_price = old_price*10 + (n - '0');
-                    }
-                }
+                let old_price = parseInt(formatMoney(itemInput.value));
                 $(this).attr('bph-curr', old_price);
             }
-            let old_price = parseInt($(this).attr('bph-curr'));
+            let old_price = parseInt(formatMoney($(this).attr('bph-curr')));
             let item_detail1 = $(this).find("div[class^=bonuses]")[0];
-            let item_detail2 = $(this).find("div[class^=rrp]")[0];
             try {
                 let itemPrices = await getItemPrices(item_id);
                 let marketValue = await getMarketValue(item_id);
