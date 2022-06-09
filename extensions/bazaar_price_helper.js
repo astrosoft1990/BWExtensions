@@ -312,7 +312,6 @@
                     item_detail2.style.color = color
                     // item_detail2.innerText = `${price - old_price}(${parseFloat((price - old_price)/old_price*100).toFixed(2)}%)`;
                     item_detail2.innerText = `${price - old_price}`;
-
                     itemInput.value = price + '-';
                 });
             }
@@ -336,7 +335,6 @@
                 }
                 let oldPrice = parseInt(formatMoney($(this).attr('bph-curr')));
                 let currentPrice = parseInt(formatMoney(itemInput.value));
-                console.log(oldPrice, currentPrice);
                 let color = "green";
                 if (currentPrice - oldPrice > 0) {
                     color = "red";
