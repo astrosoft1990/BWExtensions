@@ -96,11 +96,11 @@
     },
     {
         "file": "christmas_torn.js",
-        "name": "Christmas Town Helper",
-        "author": "Hardy[2131687]",
-        "description": "圣诞小镇辅助脚本[有点bug 先别用]",
+        "name": "Christmas Town Helper for SMTH",
+        "author": "Woohoo[2687093] Hardy[2131687]",
+        "description": "圣诞小镇辅助脚本",
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
-        "version": "v2.3.3"
+        "version": "v2.3.3.0"
     }
 ]
