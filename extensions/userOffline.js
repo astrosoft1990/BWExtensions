@@ -87,7 +87,6 @@
             let row = `<div class="statRow___oQf7N"><div class="statName___eUnMx chartAvailable___E0Tku">${uid}</div><div class="statValue___nd11v worse___aEU8X chartAvailable___E0Tku">`;
             for (let log of offline) {
                 row += `<p>${log}</p>`;
-                break;
             }
             row += `</div></div>`;
             $('.statRows___nxIDS', table).append($(row));
