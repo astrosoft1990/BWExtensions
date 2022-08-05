@@ -58,7 +58,7 @@
         "detail": "一键配置赛车自定义比赛",
         "match": "torn.com/loader.php\\?sid=racing",
         "version": "v1.0.1"
-    }, 
+    },
     {
         "file": "faction_simplified_log_view.js",
         "name": "帮派物品消息合并汉化",
@@ -102,5 +102,14 @@
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3.0"
+    },
+    {
+        "file": "userOffline.js",
+        "name": "用户离线查询",
+        "author": "TianpengMarshal [2704118]",
+        "description": "用户离线查询,招黑奴用，Personal Stats页面使用",
+        "detail": "用户离线查询,招黑奴用，Personal Stats页面使用",
+        "match": "torn.com/personalstats.php?*",
+        "version": "v1.0.0"
     }
 ]
