@@ -102,7 +102,7 @@
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3.0"
-    }
+    },
         {
         "file": "TornCitySimple.js",
         "name": "TornCitySimple",
