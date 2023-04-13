@@ -102,5 +102,14 @@
         "detail": "圣诞小镇辅助脚本",
         "match": "torn.com/christmas_town",
         "version": "v2.3.3.0"
+    },
+    {
+        "file": "TornCitySimple.js",
+        "name": "TornCitySimple",
+        "author": "astrosoft[2551155]",
+        "description": "torncity简化增强",
+        "detail": "torncity简化增强",
+        "match": "https://www.torn.com/city.php",
+        "version": "v1.1.0"
     }
 ]
